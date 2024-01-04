@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,37 +6,73 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
 
+    public static Player Instance { get; private set; }
+
+    public event EventHandler<OnHealthUpdateEventArgs> OnHealthUpdate;
+
+    public class OnHealthUpdateEventArgs : EventArgs {
+        public float playerCurrentHealth;
+    }
+
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private GameInput gameInput;
-    [SerializeField] private float playerHeight = .7f;
-    [SerializeField] private float playerRadius = 2f;
+    [SerializeField] private float playerMaxHealth = 20f;
+    [SerializeField] private float invulnerabilityTime = 1f;
 
+    private float playerHealth = 0f;
+    private float timeSinceDamage = 0f;
+
+    private void Awake() {
+        if (Instance != null){
+            Debug.Log("Player instance already exists");
+        }
+        Instance = this;
+    }
+
+    private void Start() {
+        playerHealth = playerMaxHealth;
+    }
 
     private void Update() {
         
-        Vector2 inputVector = gameInput.GetMovementVectorNormalized();
-        Vector3 moveDir = new Vector3(inputVector.x, 0f, inputVector.y);
+        Vector2 movementInputVector = gameInput.GetMovementVectorNormalized();
+        Vector3 moveDir = new Vector3(movementInputVector.x, 0f, movementInputVector.y).normalized;
         float moveDistance = moveSpeed * Time.deltaTime;
+        transform.position += moveDir * moveDistance;
 
-        bool canMove = !Physics.CapsuleCast(transform.position, transform.position + Vector3.up * playerHeight , playerRadius, moveDir, moveDistance);
+        Vector2 aimInputVector = gameInput.GetAimVectorNormalized();
+        Vector3 aimDir = new Vector3(aimInputVector.x, 0f, aimInputVector.y).normalized;
+        Debug.DrawRay(transform.position, aimDir * 10, Color.red);
 
-        if (!canMove) {
-            Vector3 moveDirX = new Vector3(moveDir.x, 0, 0);
-            canMove = !Physics.CapsuleCast(transform.position, transform.position + Vector3.up * playerHeight , playerRadius, moveDirX, moveDistance);
-            if (canMove) {
-                moveDir = moveDirX.normalized;
-            } else {
-                Vector3 moveDirZ = new Vector3(0, 0, moveDir.z);
-                canMove = !Physics.CapsuleCast(transform.position, transform.position + Vector3.up * playerHeight , playerRadius, moveDirZ, moveDistance);
-                if (canMove) {
-                    moveDir = moveDirZ.normalized;
-                }
+        timeSinceDamage += Time.deltaTime;
+
+    }
+
+    private void OnCollisionEnter(Collision collision) {
+        if(collision.gameObject.name != null)TakeDamage(collision.gameObject.name);
+    }
+
+    private void OnCollisionStay(Collision collision) {
+        if(collision.gameObject.name != null)TakeDamage(collision.gameObject.name);
+    }
+
+    private void TakeDamage(string name) {
+        if(timeSinceDamage > invulnerabilityTime) {
+            if (name == "Petrifex"){
+                playerHealth -= 1;
+                OnHealthUpdate?.Invoke(this, new OnHealthUpdateEventArgs { playerCurrentHealth = playerHealth / playerMaxHealth });
+                timeSinceDamage = 0;
             }
+        }
+        
+    }
 
-        }
-        if (canMove) {
-            transform.position += moveDir * moveDistance;
-        }
+    public Vector3 GetPlayerPosition() {
+        return transform.position;
+    }
+    
+    public float GetPlayerHealth() {
+        return playerHealth;
     }
 
 }
