@@ -9,9 +9,15 @@ public class Player : MonoBehaviour
     public static Player Instance { get; private set; }
 
     public event EventHandler<OnHealthUpdateEventArgs> OnHealthUpdate;
+    public event EventHandler<OnShootEventArgs> OnShoot; 
 
     public class OnHealthUpdateEventArgs : EventArgs {
         public float playerCurrentHealth;
+    }
+
+    public class OnShootEventArgs : EventArgs {
+        public Vector3 shooterPos;
+        public Vector3 shootingDir;
     }
 
     [SerializeField] private float moveSpeed = 5f;
@@ -78,8 +84,8 @@ public class Player : MonoBehaviour
     private void Attack(Vector3 aimDir)
     {
         if(timeSinceAttack > attackSpeed) {
-            Debug.Log("Shoot" + aimDir);
             timeSinceAttack = 0;
+            OnShoot?.Invoke(this, new OnShootEventArgs { shooterPos = transform.position + aimDir, shootingDir = aimDir });
         }
     }
 
