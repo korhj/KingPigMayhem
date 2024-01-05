@@ -18,9 +18,12 @@ public class Player : MonoBehaviour
     [SerializeField] private GameInput gameInput;
     [SerializeField] private float playerMaxHealth = 20f;
     [SerializeField] private float invulnerabilityTime = 1f;
+    [SerializeField] private float attackSpeed = 1f;
+
 
     private float playerHealth = 0f;
     private float timeSinceDamage = 0f;
+    private float timeSinceAttack = 0f;
 
     private void Awake() {
         if (Instance != null){
@@ -43,10 +46,15 @@ public class Player : MonoBehaviour
         Vector2 aimInputVector = gameInput.GetAimVectorNormalized();
         Vector3 aimDir = new Vector3(aimInputVector.x, 0f, aimInputVector.y).normalized;
         Debug.DrawRay(transform.position, aimDir * 10, Color.red);
+        if(aimDir.magnitude > 0.9) {
+            Attack(aimDir);
+        }
 
         timeSinceDamage += Time.deltaTime;
+        timeSinceAttack += Time.deltaTime;
 
     }
+
 
     private void OnCollisionEnter(Collision collision) {
         if(collision.gameObject.name != null)TakeDamage(collision.gameObject.name);
@@ -65,6 +73,14 @@ public class Player : MonoBehaviour
             }
         }
         
+    }
+
+    private void Attack(Vector3 aimDir)
+    {
+        if(timeSinceAttack > attackSpeed) {
+            Debug.Log("Shoot" + aimDir);
+            timeSinceAttack = 0;
+        }
     }
 
     public Vector3 GetPlayerPosition() {
