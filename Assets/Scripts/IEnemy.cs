@@ -9,5 +9,5 @@ public interface IEnemy {
     public class OnHealthUpdateEventArgs : EventArgs {
         public float enemyCurrentHealthNormalized;
     }
-    void TakeDamage();
+    void TakeDamage(Vector3 damageDirection, int knockback);
 }

@@ -16,7 +16,6 @@ public class Petrifex : MonoBehaviour, IEnemy {
     [SerializeField] private float petrifexMaxHealth = 10;
 
     private float petrifexHealth;
-
     private Rigidbody petrifexRigidbody;
 
 
@@ -37,7 +36,8 @@ public class Petrifex : MonoBehaviour, IEnemy {
 
     }
 
-    public void TakeDamage() {
+    public void TakeDamage(Vector3 damageDirection, int knockback) {
+        petrifexRigidbody.AddForce(damageDirection * knockback, ForceMode.Impulse);
         petrifexHealth -= 5;
         OnHealthUpdate?.Invoke(this, new IEnemy.OnHealthUpdateEventArgs { enemyCurrentHealthNormalized = petrifexHealth / petrifexMaxHealth });
         if (petrifexHealth <= 0) {

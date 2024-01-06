@@ -5,6 +5,7 @@ using UnityEngine;
 public class Fireball : MonoBehaviour
 {
     [SerializeField] private float fireballSpeed = 10f;
+    [SerializeField] private readonly int knockback = 100;
     private Vector3 shootingDir;
     private Rigidbody fireballRigidbody;
     private bool hasCollided = false;
@@ -22,7 +23,7 @@ public class Fireball : MonoBehaviour
     private void OnTriggerEnter(Collider collider) {
         if(!hasCollided){
             IEnemy enemy = collider.GetComponent<IEnemy>();
-            enemy?.TakeDamage();   
+            enemy?.TakeDamage(shootingDir.normalized, knockback);
             Destroy(gameObject);    
             hasCollided = true;
         }
