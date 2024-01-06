@@ -64,20 +64,18 @@ public class Player : MonoBehaviour
 
 
     private void OnCollisionEnter(Collision collision) {
-        if(collision.gameObject.name != null)TakeDamage(collision.gameObject.name);
+        if(collision.collider.GetComponent<IEnemy>() != null)TakeDamage(collision.collider.GetComponent<IEnemy>());
     }
 
     private void OnCollisionStay(Collision collision) {
-        if(collision.gameObject.name != null)TakeDamage(collision.gameObject.name);
+        if(collision.collider.GetComponent<IEnemy>() != null)TakeDamage(collision.collider.GetComponent<IEnemy>());
     }
 
-    private void TakeDamage(string name) {
+    private void TakeDamage(IEnemy enemy) {
         if(timeSinceDamage > invulnerabilityTime) {
-            if (name == "Petrifex(Clone)"){
-                playerHealth -= 1;
+                playerHealth -= enemy.GetEnemyDamage();
                 OnHealthUpdate?.Invoke(this, new OnHealthUpdateEventArgs { playerCurrentHealthNormalized = playerHealth / playerMaxHealth });
                 timeSinceDamage = 0;
-            }
         }
         
     }

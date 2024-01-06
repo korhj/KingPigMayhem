@@ -8,8 +8,9 @@ public class Petrifex : MonoBehaviour, IEnemy, IHasEnemyHealthBar {
 
     public event EventHandler<IHasEnemyHealthBar.OnHealthUpdateEventArgs> OnHealthUpdate;
 
-    [SerializeField] private float moveSpeed = 7f;
+    [SerializeField] private float moveSpeed = 3f;
     [SerializeField] private float petrifexMaxHealth = 10;
+    [SerializeField] private float petrifexDamage = 1;
 
     private float petrifexHealth;
     private Rigidbody petrifexRigidbody;
@@ -39,6 +40,10 @@ public class Petrifex : MonoBehaviour, IEnemy, IHasEnemyHealthBar {
         if (petrifexHealth <= 0) {
             Destroy(gameObject);
         }
+    }
+
+    public float GetEnemyDamage() {
+        return petrifexDamage;
     }
 
         

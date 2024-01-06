@@ -12,6 +12,7 @@ public class Frog : MonoBehaviour, IEnemy, IHasEnemyHealthBar {
     [SerializeField] private float frogMaxHealth = 10f;
     [SerializeField] private float directionNoiceCutoffDistance = 5f;
     [SerializeField] private float directionNoiceLevel = 1.5f;
+    [SerializeField] private float frogDamage = 2;
 
     private float frogHealth;
     private Rigidbody frogRigidbody;
@@ -81,5 +82,7 @@ public class Frog : MonoBehaviour, IEnemy, IHasEnemyHealthBar {
         }
     }
 
-        
+    public float GetEnemyDamage() {
+        return frogDamage;
+    }
 }
