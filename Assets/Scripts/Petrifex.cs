@@ -1,16 +1,25 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Petrifex : MonoBehaviour, IEnemy
-{
+public class Petrifex : MonoBehaviour, IEnemy {
+
+
+    public event EventHandler<IEnemy.OnHealthUpdateEventArgs> OnHealthUpdate;
+
+    public class OnHealthUpdateEventArgs : EventArgs {
+        public float enemyCurrentHealthNormalized;
+    }
+
     [SerializeField] private float moveSpeed = 3f;
     [SerializeField] private float petrifexMaxHealth = 10;
 
     private float petrifexHealth;
 
     private Rigidbody petrifexRigidbody;
-   
+
+
     private void Start() {
         petrifexHealth = petrifexMaxHealth;
         petrifexRigidbody = GetComponent<Rigidbody>();
@@ -29,8 +38,8 @@ public class Petrifex : MonoBehaviour, IEnemy
     }
 
     public void TakeDamage() {
-        Debug.Log("TakeDamage");
         petrifexHealth -= 5;
+        OnHealthUpdate?.Invoke(this, new IEnemy.OnHealthUpdateEventArgs { enemyCurrentHealthNormalized = petrifexHealth / petrifexMaxHealth });
         if (petrifexHealth <= 0) {
             Destroy(gameObject);
         }

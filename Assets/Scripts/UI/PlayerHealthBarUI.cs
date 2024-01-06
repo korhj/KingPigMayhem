@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ProgressBarUI : MonoBehaviour
+public class PlayerHealthBarUI : MonoBehaviour
 {
     [SerializeField] private Player player;
     [SerializeField] private Image barImage;
@@ -17,7 +17,7 @@ public class ProgressBarUI : MonoBehaviour
 
     private void Player_OnHealthUpdate(object sender, Player.OnHealthUpdateEventArgs e)
     {
-        barImage.fillAmount = e.playerCurrentHealth;
+        barImage.fillAmount = e.playerCurrentHealthNormalized;
     }
 
 }

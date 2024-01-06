@@ -6,23 +6,26 @@ public class Fireball : MonoBehaviour
 {
     [SerializeField] private float fireballSpeed = 10f;
     private Vector3 shootingDir;
+    private Rigidbody fireballRigidbody;
+    private bool hasCollided = false;
+
     public void Setup(Vector3 shootingDir) {
+        fireballRigidbody = GetComponent<Rigidbody>();
         this.shootingDir = shootingDir;
         Destroy(gameObject, 10f);
     }
 
-    private void Update() {
-        transform.position += shootingDir * fireballSpeed * Time.deltaTime;
+    private void FixedUpdate() {
+        fireballRigidbody.MovePosition(transform.position + shootingDir * fireballSpeed * Time.deltaTime);
     }
 
     private void OnTriggerEnter(Collider collider) {
-        Debug.Log("OnTrigger");
-        IEnemy enemy = collider.GetComponent<IEnemy>();
-        if ( enemy != null) {
-            enemy.TakeDamage();
+        if(!hasCollided){
+            IEnemy enemy = collider.GetComponent<IEnemy>();
+            enemy?.TakeDamage();   
+            Destroy(gameObject);    
+            hasCollided = true;
         }
-        
-        Destroy(gameObject);
-        
+         
     }
 }

@@ -12,7 +12,7 @@ public class Player : MonoBehaviour
     public event EventHandler<OnShootEventArgs> OnShoot; 
 
     public class OnHealthUpdateEventArgs : EventArgs {
-        public float playerCurrentHealth;
+        public float playerCurrentHealthNormalized;
     }
 
     public class OnShootEventArgs : EventArgs {
@@ -44,7 +44,6 @@ public class Player : MonoBehaviour
     }
 
     private void Update() {
-    
     }
 
     private void FixedUpdate() {
@@ -74,9 +73,9 @@ public class Player : MonoBehaviour
 
     private void TakeDamage(string name) {
         if(timeSinceDamage > invulnerabilityTime) {
-            if (name == "Petrifex"){
+            if (name == "Petrifex(Clone)"){
                 playerHealth -= 1;
-                OnHealthUpdate?.Invoke(this, new OnHealthUpdateEventArgs { playerCurrentHealth = playerHealth / playerMaxHealth });
+                OnHealthUpdate?.Invoke(this, new OnHealthUpdateEventArgs { playerCurrentHealthNormalized = playerHealth / playerMaxHealth });
                 timeSinceDamage = 0;
             }
         }

@@ -8,11 +8,7 @@ public class EnemySpawner : MonoBehaviour
     void Start()
     {
         Instantiate(petrifex, new Vector3(-5, 0, 0), UnityEngine.Quaternion.identity);
+        Instantiate(petrifex, new Vector3(-5, 0, 10), UnityEngine.Quaternion.identity);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }
