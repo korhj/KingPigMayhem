@@ -26,7 +26,7 @@ public class Player : MonoBehaviour
     [SerializeField] private float invulnerabilityTime = 1f;
     [SerializeField] private float attackSpeed = 1f;
 
-
+    private Rigidbody playerRigidbody;
     private float playerHealth = 0f;
     private float timeSinceDamage = 0f;
     private float timeSinceAttack = 0f;
@@ -40,25 +40,27 @@ public class Player : MonoBehaviour
 
     private void Start() {
         playerHealth = playerMaxHealth;
+        playerRigidbody = GetComponent<Rigidbody>();
     }
 
     private void Update() {
-        
+    
+    }
+
+    private void FixedUpdate() {
         Vector2 movementInputVector = gameInput.GetMovementVectorNormalized();
         Vector3 moveDir = new Vector3(movementInputVector.x, 0f, movementInputVector.y).normalized;
-        float moveDistance = moveSpeed * Time.deltaTime;
-        transform.position += moveDir * moveDistance;
+        float moveDistance = moveSpeed * Time.fixedDeltaTime;
+        playerRigidbody.MovePosition(transform.position + moveDir * moveDistance);
 
         Vector2 aimInputVector = gameInput.GetAimVectorNormalized();
         Vector3 aimDir = new Vector3(aimInputVector.x, 0f, aimInputVector.y).normalized;
-        Debug.DrawRay(transform.position, aimDir * 10, Color.red);
         if(aimDir.magnitude > 0.9) {
             Attack(aimDir);
         }
 
-        timeSinceDamage += Time.deltaTime;
-        timeSinceAttack += Time.deltaTime;
-
+        timeSinceDamage += Time.fixedDeltaTime;
+        timeSinceAttack += Time.fixedDeltaTime;
     }
 
 
