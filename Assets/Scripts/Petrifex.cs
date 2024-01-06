@@ -14,11 +14,13 @@ public class Petrifex : MonoBehaviour, IEnemy, IHasEnemyHealthBar {
 
     private float petrifexHealth;
     private Rigidbody petrifexRigidbody;
+    private bool playerIsAlive = true;
 
 
     private void Start() {
         petrifexHealth = petrifexMaxHealth;
         petrifexRigidbody = GetComponent<Rigidbody>();
+        Player.Instance.OnPlayerDeath += (object sender, EventArgs e) => {playerIsAlive = false;};
     }
 
     private void Update() {
@@ -26,10 +28,12 @@ public class Petrifex : MonoBehaviour, IEnemy, IHasEnemyHealthBar {
     }
 
     private void FixedUpdate() {
+        if (playerIsAlive) {
+            Vector3 moveDir = (Player.Instance.GetPlayerPosition() - transform.position).normalized;
+            float moveDistance = moveSpeed * Time.fixedDeltaTime;
+            petrifexRigidbody.MovePosition(transform.position + moveDir * moveDistance);
+        }
         
-        Vector3 moveDir = (Player.Instance.GetPlayerPosition() - transform.position).normalized;
-        float moveDistance = moveSpeed * Time.fixedDeltaTime;
-        petrifexRigidbody.MovePosition(transform.position + moveDir * moveDistance);
 
     }
 

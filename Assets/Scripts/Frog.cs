@@ -20,12 +20,14 @@ public class Frog : MonoBehaviour, IEnemy, IHasEnemyHealthBar {
     private float jumpEnded = 0f;
     private bool currentlyJumping = true;
     private Vector3 moveDir;
+    private bool playerIsAlive = true;
 
 
     private void Start() {
         frogHealth = frogMaxHealth;
         frogRigidbody = GetComponent<Rigidbody>();
         moveDir = GetMovementDir();
+        Player.Instance.OnPlayerDeath += (object sender, EventArgs e) => {playerIsAlive = false;};
     }
 
     private void Update() {
@@ -33,28 +35,30 @@ public class Frog : MonoBehaviour, IEnemy, IHasEnemyHealthBar {
     }
 
     private void FixedUpdate() {
+        if (playerIsAlive) {
+            if(currentlyJumping & jumpStarted < jumpDuration) {
+                jumpStarted += Time.fixedDeltaTime;
+                float moveDistance = jumpSpeed * Time.fixedDeltaTime;
+                frogRigidbody.MovePosition(transform.position + moveDir * moveDistance);
+            } 
+            else if (currentlyJumping & jumpStarted > jumpDuration) {
+                frogRigidbody.velocity = Vector3.zero;
+                currentlyJumping = false;
+                jumpEnded = 0f;
+            }
+            else if (!currentlyJumping & jumpEnded < timeBetweenJumps) {
+                jumpEnded += Time.fixedDeltaTime;
+            }
+            else if (!currentlyJumping & jumpEnded > timeBetweenJumps) {
+                currentlyJumping = true;
+                jumpStarted = 0f;
+                moveDir = GetMovementDir();
+            }
+            else {
+                Debug.LogError("Error in frog jumping logic");
+            } 
+        }
         
-        if(currentlyJumping & jumpStarted < jumpDuration) {
-            jumpStarted += Time.fixedDeltaTime;
-            float moveDistance = jumpSpeed * Time.fixedDeltaTime;
-            frogRigidbody.MovePosition(transform.position + moveDir * moveDistance);
-        } 
-        else if (currentlyJumping & jumpStarted > jumpDuration) {
-            frogRigidbody.velocity = Vector3.zero;
-            currentlyJumping = false;
-            jumpEnded = 0f;
-        }
-        else if (!currentlyJumping & jumpEnded < timeBetweenJumps) {
-            jumpEnded += Time.fixedDeltaTime;
-        }
-        else if (!currentlyJumping & jumpEnded > timeBetweenJumps) {
-            currentlyJumping = true;
-            jumpStarted = 0f;
-            moveDir = GetMovementDir();
-        }
-        else {
-            Debug.LogError("Error in frog jumping logic");
-        }
 
     }
 

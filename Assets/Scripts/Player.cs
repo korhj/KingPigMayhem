@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -10,6 +11,7 @@ public class Player : MonoBehaviour
 
     public event EventHandler<OnHealthUpdateEventArgs> OnHealthUpdate;
     public event EventHandler<OnShootEventArgs> OnShoot; 
+    public event EventHandler OnPlayerDeath;
 
     public class OnHealthUpdateEventArgs : EventArgs {
         public float playerCurrentHealthNormalized;
@@ -26,6 +28,7 @@ public class Player : MonoBehaviour
     [SerializeField] private float invulnerabilityTime = 1f;
     [SerializeField] private float attackSpeed = 1f;
 
+    private bool playerIsAlive = true;
     private Rigidbody playerRigidbody;
     private float playerHealth = 0f;
     private float timeSinceDamage = 0f;
@@ -47,19 +50,21 @@ public class Player : MonoBehaviour
     }
 
     private void FixedUpdate() {
-        Vector2 movementInputVector = gameInput.GetMovementVectorNormalized();
-        Vector3 moveDir = new Vector3(movementInputVector.x, 0f, movementInputVector.y).normalized;
-        float moveDistance = moveSpeed * Time.fixedDeltaTime;
-        playerRigidbody.MovePosition(transform.position + moveDir * moveDistance);
+        if(playerIsAlive) {
+            Vector2 movementInputVector = gameInput.GetMovementVectorNormalized();
+            Vector3 moveDir = new Vector3(movementInputVector.x, 0f, movementInputVector.y).normalized;
+            float moveDistance = moveSpeed * Time.fixedDeltaTime;
+            playerRigidbody.MovePosition(transform.position + moveDir * moveDistance);
 
-        Vector2 aimInputVector = gameInput.GetAimVectorNormalized();
-        Vector3 aimDir = new Vector3(aimInputVector.x, 0f, aimInputVector.y).normalized;
-        if(aimDir.magnitude > 0.9) {
-            Attack(aimDir);
+            Vector2 aimInputVector = gameInput.GetAimVectorNormalized();
+            Vector3 aimDir = new Vector3(aimInputVector.x, 0f, aimInputVector.y).normalized;
+            if(aimDir.magnitude > 0.9) {
+                Attack(aimDir);
+            }
+
+            timeSinceDamage += Time.fixedDeltaTime;
+            timeSinceAttack += Time.fixedDeltaTime;
         }
-
-        timeSinceDamage += Time.fixedDeltaTime;
-        timeSinceAttack += Time.fixedDeltaTime;
     }
 
 
@@ -76,6 +81,10 @@ public class Player : MonoBehaviour
                 playerHealth -= enemy.GetEnemyDamage();
                 OnHealthUpdate?.Invoke(this, new OnHealthUpdateEventArgs { playerCurrentHealthNormalized = playerHealth / playerMaxHealth });
                 timeSinceDamage = 0;
+                if (playerHealth <= 0) {
+                    playerIsAlive = false;
+                    OnPlayerDeath?.Invoke(this, EventArgs.Empty);
+                }
         }
         
     }
