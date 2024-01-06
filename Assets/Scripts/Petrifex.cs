@@ -3,16 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Petrifex : MonoBehaviour, IEnemy {
+public class Petrifex : MonoBehaviour, IEnemy, IHasEnemyHealthBar {
 
 
-    public event EventHandler<IEnemy.OnHealthUpdateEventArgs> OnHealthUpdate;
+    public event EventHandler<IHasEnemyHealthBar.OnHealthUpdateEventArgs> OnHealthUpdate;
 
-    public class OnHealthUpdateEventArgs : EventArgs {
-        public float enemyCurrentHealthNormalized;
-    }
-
-    [SerializeField] private float moveSpeed = 3f;
+    [SerializeField] private float moveSpeed = 7f;
     [SerializeField] private float petrifexMaxHealth = 10;
 
     private float petrifexHealth;
@@ -30,7 +26,7 @@ public class Petrifex : MonoBehaviour, IEnemy {
 
     private void FixedUpdate() {
         
-        Vector3 moveDir = Player.Instance.GetPlayerPosition() - transform.position;
+        Vector3 moveDir = (Player.Instance.GetPlayerPosition() - transform.position).normalized;
         float moveDistance = moveSpeed * Time.fixedDeltaTime;
         petrifexRigidbody.MovePosition(transform.position + moveDir * moveDistance);
 
@@ -39,7 +35,7 @@ public class Petrifex : MonoBehaviour, IEnemy {
     public void TakeDamage(Vector3 damageDirection, int knockback) {
         petrifexRigidbody.AddForce(damageDirection * knockback, ForceMode.Impulse);
         petrifexHealth -= 5;
-        OnHealthUpdate?.Invoke(this, new IEnemy.OnHealthUpdateEventArgs { enemyCurrentHealthNormalized = petrifexHealth / petrifexMaxHealth });
+        OnHealthUpdate?.Invoke(this, new IHasEnemyHealthBar.OnHealthUpdateEventArgs { enemyCurrentHealthNormalized = petrifexHealth / petrifexMaxHealth });
         if (petrifexHealth <= 0) {
             Destroy(gameObject);
         }

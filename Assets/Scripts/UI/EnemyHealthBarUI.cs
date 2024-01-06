@@ -5,17 +5,22 @@ using UnityEngine.UI;
 
 public class EnemyHealthBarUI : MonoBehaviour {
 
-    [SerializeField] private Petrifex enemy;
+    [SerializeField] private GameObject hasEnemyHealthBarGameObject;
     [SerializeField] private Image barImage;
 
-    void Start()
-    {
-        enemy.OnHealthUpdate += Enemy_OnHealthUpdate; 
+    private IHasEnemyHealthBar hasEnemyHealthBar;
+
+    void Start() {
+        hasEnemyHealthBar = hasEnemyHealthBarGameObject.GetComponent<IHasEnemyHealthBar>();
+        if (hasEnemyHealthBar == null) {
+            Debug.LogError("GameObject " + hasEnemyHealthBarGameObject.name + "does not implement IHasEnemyHealthBar");
+        }
+        hasEnemyHealthBar.OnHealthUpdate += HasEnemyHealthBar_OnHealthUpdate; 
         barImage.fillAmount = 1f;
     }
 
-    private void Enemy_OnHealthUpdate(object sender, IEnemy.OnHealthUpdateEventArgs e)
-    {
+    private void HasEnemyHealthBar_OnHealthUpdate(object sender, IHasEnemyHealthBar.OnHealthUpdateEventArgs e) {
+
         barImage.fillAmount = e.enemyCurrentHealthNormalized;
     }
 
