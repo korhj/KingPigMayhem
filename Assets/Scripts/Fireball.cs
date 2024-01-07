@@ -2,17 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Fireball : MonoBehaviour
-{
+public class Fireball : MonoBehaviour, IAttack {
     [SerializeField] private float fireballSpeed = 10f;
-    [SerializeField] private readonly int knockback = 100;
+    [SerializeField] private int knockback = 100;
     private Vector3 shootingDir;
     private Rigidbody fireballRigidbody;
-    private bool hasCollided = false;
+    private float damage; 
 
-    public void Setup(Vector3 shootingDir) {
+    public void Setup(Vector3 shootingDir, float damage) {
         fireballRigidbody = GetComponent<Rigidbody>();
         this.shootingDir = shootingDir;
+        this.damage = damage;
         Destroy(gameObject, 10f);
     }
 
@@ -21,12 +21,8 @@ public class Fireball : MonoBehaviour
     }
 
     private void OnTriggerEnter(Collider collider) {
-        if(!hasCollided){
-            IEnemy enemy = collider.GetComponent<IEnemy>();
-            enemy?.TakeDamage(shootingDir.normalized, knockback);
-            Destroy(gameObject);    
-            hasCollided = true;
-        }
-         
+        IEnemy enemy = collider.GetComponent<IEnemy>();
+        enemy?.TakeDamage(shootingDir.normalized, knockback, damage);
+        Destroy(gameObject);             
     }
 }

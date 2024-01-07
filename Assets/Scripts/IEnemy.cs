@@ -6,5 +6,6 @@ using UnityEngine;
 public interface IEnemy {
 
     float GetEnemyDamage();
-    void TakeDamage(Vector3 damageDirection, int knockback);
+    void TakeDamage(Vector3 damageDirection, int knockback, float damage);
+    void IncreasePlayerScoreOnDeath(int scoreIncrease);
 }

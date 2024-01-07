@@ -133,6 +133,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 3
   petrifexMaxHealth: 10
+  petrifexDamage: 1
 --- !u!136 &6543141796600157684
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -199,6 +200,10 @@ PrefabInstance:
       propertyPath: hasEnemyHealthBarGameObject
       value: 
       objectReference: {fileID: 9199856104533815785}
+    - target: {fileID: 3723280589848256055, guid: b9f39f7087d530245a8a1e367efb1e5f, type: 3}
+      propertyPath: m_PresetInfoIsWorld
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4126213012526649387, guid: b9f39f7087d530245a8a1e367efb1e5f, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5

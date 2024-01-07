@@ -54,6 +54,7 @@ MonoBehaviour:
   frogMaxHealth: 10
   directionNoiceCutoffDistance: 5
   directionNoiceLevel: 1.5
+  frogDamage: 2
 --- !u!135 &4195799647250594515
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -197,6 +198,10 @@ PrefabInstance:
       propertyPath: hasEnemyHealthBarGameObject
       value: 
       objectReference: {fileID: 366664849424095832}
+    - target: {fileID: 3723280589848256055, guid: b9f39f7087d530245a8a1e367efb1e5f, type: 3}
+      propertyPath: m_PresetInfoIsWorld
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4126213012526649387, guid: b9f39f7087d530245a8a1e367efb1e5f, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5

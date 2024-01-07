@@ -22,4 +22,9 @@ public class GameInput : MonoBehaviour
         Vector2 inputVector = playerInputActions.Player.Aim.ReadValue<Vector2>();
         return inputVector.normalized;
     }
+
+    public Vector2 GetChargeAttackVectorNormalized() {
+        Vector2 inputVector = playerInputActions.Player.ChargeAttack.ReadValue<Vector2>();
+        return inputVector.normalized;
+    }
 }

@@ -13,6 +13,7 @@ public class Frog : MonoBehaviour, IEnemy, IHasEnemyHealthBar {
     [SerializeField] private float directionNoiceCutoffDistance = 5f;
     [SerializeField] private float directionNoiceLevel = 1.5f;
     [SerializeField] private float frogDamage = 2;
+    [SerializeField] private int scoreIncrease = 10;
 
     private float frogHealth;
     private Rigidbody frogRigidbody;
@@ -76,12 +77,16 @@ public class Frog : MonoBehaviour, IEnemy, IHasEnemyHealthBar {
         dir.z += UnityEngine.Random.Range(-directionNoiceLevel, directionNoiceLevel);
         return dir.normalized;
     }
+    public void IncreasePlayerScoreOnDeath(int scoreIncrease) {
+        Player.Instance.IncreaseScore(scoreIncrease);
+    }
 
-    public void TakeDamage(Vector3 damageDirection, int knockback) {
+    public void TakeDamage(Vector3 damageDirection, int knockback, float damage) {
         frogRigidbody.AddForce(damageDirection * knockback, ForceMode.Impulse);
-        frogHealth -= 5;
+        frogHealth -= damage;
         OnHealthUpdate?.Invoke(this, new IHasEnemyHealthBar.OnHealthUpdateEventArgs { enemyCurrentHealthNormalized = frogHealth / frogMaxHealth });
         if (frogHealth <= 0) {
+            IncreasePlayerScoreOnDeath(scoreIncrease);
             Destroy(gameObject);
         }
     }

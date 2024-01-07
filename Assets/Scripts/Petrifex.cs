@@ -12,6 +12,8 @@ public class Petrifex : MonoBehaviour, IEnemy, IHasEnemyHealthBar {
     [SerializeField] private float petrifexMaxHealth = 10;
     [SerializeField] private float petrifexDamage = 1;
 
+    [SerializeField] private int scoreIncrease = 10;
+
     private float petrifexHealth;
     private Rigidbody petrifexRigidbody;
     private bool playerIsAlive = true;
@@ -36,12 +38,16 @@ public class Petrifex : MonoBehaviour, IEnemy, IHasEnemyHealthBar {
         
 
     }
+    public void IncreasePlayerScoreOnDeath(int scoreIncrease) {
+        Player.Instance.IncreaseScore(scoreIncrease);
+    }
 
-    public void TakeDamage(Vector3 damageDirection, int knockback) {
+    public void TakeDamage(Vector3 damageDirection, int knockback, float damage) {
         petrifexRigidbody.AddForce(damageDirection * knockback, ForceMode.Impulse);
-        petrifexHealth -= 5;
+        petrifexHealth -= damage;
         OnHealthUpdate?.Invoke(this, new IHasEnemyHealthBar.OnHealthUpdateEventArgs { enemyCurrentHealthNormalized = petrifexHealth / petrifexMaxHealth });
         if (petrifexHealth <= 0) {
+            IncreasePlayerScoreOnDeath(scoreIncrease);
             Destroy(gameObject);
         }
     }

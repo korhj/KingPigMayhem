@@ -8,9 +8,9 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] private Transform frog;
     void Start()
     {
-        Instantiate(petrifex, new Vector3(-5, 0, 0), UnityEngine.Quaternion.identity);
-        Instantiate(petrifex, new Vector3(-5, 0, 10), UnityEngine.Quaternion.identity);
-        Instantiate(frog, new Vector3(5, 0, 10), UnityEngine.Quaternion.identity);
+        Instantiate(petrifex, new Vector3(-5, 0, 0), Quaternion.identity);
+        Instantiate(petrifex, new Vector3(-5, 0, 10), Quaternion.identity);
+        Instantiate(frog, new Vector3(5, 0, 10), Quaternion.identity);
     }
 
 }
