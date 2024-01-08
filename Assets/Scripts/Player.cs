@@ -15,6 +15,7 @@ public class Player : MonoBehaviour
     public event EventHandler<OnChargeUpdateEventArgs> OnChargeUpdate;
 
     public event EventHandler<OnShootEventArgs> OnShootChargeAttack;
+    public event EventHandler<OnScoreIncreaseEventArgs> OnScoreIncrease;
 
     public class OnHealthUpdateEventArgs : EventArgs {
         public float playerCurrentHealthNormalized;
@@ -28,6 +29,9 @@ public class Player : MonoBehaviour
 
     public class OnChargeUpdateEventArgs : EventArgs {
         public float charge;
+    }
+    public class OnScoreIncreaseEventArgs : EventArgs{
+        public int score;
     }
 
     [SerializeField] private float moveSpeed = 5f;
@@ -143,6 +147,11 @@ public class Player : MonoBehaviour
 
     public void IncreaseScore(float scoreIncrese) {
         this.score += scoreIncrese;
-        Debug.Log(score);
+        OnScoreIncrease?.Invoke(this, new OnScoreIncreaseEventArgs { score = (int)this.score});
     }
+
+    public int GetScore() {
+        return (int)score;
+    }
+
 }
