@@ -9,9 +9,9 @@ public class GameManager : MonoBehaviour {
     public static GameManager Instance { get; private set; }
 
     [SerializeField] PauseUI pauseUI;
-    [SerializeField] float scoreIncrease = 10; 
+    //[SerializeField] float scoreIncrease = 10; 
 
-    public event EventHandler OnStateChange;
+    public event EventHandler OnStartPlaying;
 
     private enum State {
         Countdown,
@@ -27,6 +27,13 @@ public class GameManager : MonoBehaviour {
     private float timeScale;
     private State previousState;
 
+    private void Awake() {
+        if (Instance != null){
+            Debug.Log("GameManager instance already exists");
+        }
+        Instance = this;
+    }
+
     private void Start() {
         timeScale =Time.timeScale;
         countdownTimer = 0f;
@@ -34,7 +41,7 @@ public class GameManager : MonoBehaviour {
         gamePaused = false;
         state = State.Countdown;
         previousState = state;
-        Player.Instance.OnPlayerDeath += (object sender, EventArgs e) => {state = State.GameOver; OnStateChange?.Invoke(this, EventArgs.Empty);};
+        Player.Instance.OnPlayerDeath += (object sender, EventArgs e) => {state = State.GameOver;};
         pauseUI.OnGamePaused += GameManager_OnGamePaused;
     }
 
@@ -53,7 +60,6 @@ public class GameManager : MonoBehaviour {
         else {
             Time.timeScale = timeScale;
         }
-        OnStateChange?.Invoke(this, EventArgs.Empty);
     }
 
     private void Update() {
@@ -61,13 +67,13 @@ public class GameManager : MonoBehaviour {
             case State.Countdown:
                 if(countdownTimer >= 3) {
                     state = State.Playing;
-                    OnStateChange?.Invoke(this, EventArgs.Empty);
+                    OnStartPlaying?.Invoke(this, EventArgs.Empty);
                 }
                 countdownTimer += Time.deltaTime;
                 break;
             case State.Playing:
                 if(scoreTimer >= 10){
-                    Player.Instance.IncreaseScore(scoreIncrease);
+                    //Player.Instance.IncreaseScore(scoreIncrease);
                     scoreTimer = 0;
                 }
                 scoreTimer += Time.deltaTime;
