@@ -153,4 +153,7 @@ public class Player : MonoBehaviour {
         return (int)score;
     }
 
+    public void MovePlayerThroughDoor(Vector3 point) {
+        transform.position = point;
+    }
 }

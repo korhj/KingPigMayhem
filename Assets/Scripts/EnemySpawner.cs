@@ -4,34 +4,36 @@ using UnityEngine;
 using System;
 using System.Linq;
 
+
 public class EnemySpawner : MonoBehaviour {
 
-    public event EventHandler OnRoomCleared;
+    public event EventHandler OnEnemiesDead;
     [SerializeField] private Transform petrifex;
     [SerializeField] private Transform frog;
-    [SerializeField] private int spawnPointX = 7;
-    [SerializeField] private int spawnPointZ = 4;
+    [SerializeField] private float roomWidth;
+    [SerializeField] private float roomHeight;
+    [SerializeField] private Room parentRoom;
 
     private List<UnityEngine.Object> enemies;
-    private bool enemiesSpawned = false;
-    private void Awake() {
+    private bool enemiesActive = false;
+    private float spawnPointXOfset;
+    private float spawnPointZOfset;
+    private Vector3 roomPos;
 
+    private void Start() {
         enemies = new List<UnityEngine.Object>();
-        GameManager.Instance.OnStartPlaying += EnemySpawner_SpawnEnemies;
-    }
-
-    private void EnemySpawner_SpawnEnemies(object sender, EventArgs e) {
-        enemiesSpawned = true;
-        enemies.Add(Instantiate(GetRandomEnemy(), new Vector3(-spawnPointX, 0, -spawnPointZ), Quaternion.identity));
-        enemies.Add(Instantiate(GetRandomEnemy(), new Vector3(-spawnPointX, 0, spawnPointZ), Quaternion.identity));
-        enemies.Add(Instantiate(GetRandomEnemy(), new Vector3(spawnPointX, 0, spawnPointZ), Quaternion.identity));
-        enemies.Add(Instantiate(GetRandomEnemy(), new Vector3(spawnPointX, 0, -spawnPointZ), Quaternion.identity));
+        roomPos = parentRoom.transform.position;
+        spawnPointXOfset = roomWidth / 4;
+        spawnPointZOfset = roomHeight / 4;
+        Debug.Log(roomPos + " " + spawnPointXOfset + " " + spawnPointZOfset);
+        //SpawnEnemies();
     }
 
     private void Update() {
         enemies.RemoveAll(enemy => enemy == null);
-        if (enemiesSpawned == true & enemies.Count() == 0) {
-            OnRoomCleared?.Invoke(this, EventArgs.Empty);
+        if (enemiesActive == true & enemies.Count() == 0) {
+            enemiesActive = false;
+            OnEnemiesDead?.Invoke(this, EventArgs.Empty);
         }
 
     }
@@ -46,4 +48,11 @@ public class EnemySpawner : MonoBehaviour {
         }
     }
 
+    public void SpawnEnemies() {
+        enemiesActive = true;
+        enemies.Add(Instantiate(GetRandomEnemy(), roomPos + new Vector3(-spawnPointXOfset, 0, -spawnPointZOfset), Quaternion.identity));
+        enemies.Add(Instantiate(GetRandomEnemy(), roomPos + new Vector3(-spawnPointXOfset, 0, spawnPointZOfset), Quaternion.identity));
+        enemies.Add(Instantiate(GetRandomEnemy(), roomPos + new Vector3(spawnPointXOfset, 0, spawnPointZOfset), Quaternion.identity));
+        enemies.Add(Instantiate(GetRandomEnemy(), roomPos + new Vector3(spawnPointXOfset, 0, -spawnPointZOfset), Quaternion.identity));
+    }
 }
