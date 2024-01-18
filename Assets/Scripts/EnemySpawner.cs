@@ -1,18 +1,27 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using System;
 using System.Linq;
+using UnityEngine;
 
-
-public class EnemySpawner : MonoBehaviour {
-
+public class EnemySpawner : MonoBehaviour
+{
     public event EventHandler OnEnemiesDead;
-    [SerializeField] private Transform petrifex;
-    [SerializeField] private Transform frog;
-    [SerializeField] private float roomWidth;
-    [SerializeField] private float roomHeight;
-    [SerializeField] private Room parentRoom;
+
+    [SerializeField]
+    private Transform petrifex;
+
+    [SerializeField]
+    private Transform frog;
+
+    [SerializeField]
+    private float roomWidth;
+
+    [SerializeField]
+    private float roomHeight;
+
+    [SerializeField]
+    private Room parentRoom;
 
     private List<UnityEngine.Object> enemies;
     private bool enemiesActive = false;
@@ -20,39 +29,69 @@ public class EnemySpawner : MonoBehaviour {
     private float spawnPointZOfset;
     private Vector3 roomPos;
 
-    private void Start() {
+    private void Start()
+    {
         enemies = new List<UnityEngine.Object>();
         roomPos = parentRoom.transform.position;
         spawnPointXOfset = roomWidth / 4;
         spawnPointZOfset = roomHeight / 4;
-        Debug.Log(roomPos + " " + spawnPointXOfset + " " + spawnPointZOfset);
+        //Debug.Log(roomPos + " " + spawnPointXOfset + " " + spawnPointZOfset);
         //SpawnEnemies();
     }
 
-    private void Update() {
+    private void Update()
+    {
         enemies.RemoveAll(enemy => enemy == null);
-        if (enemiesActive == true & enemies.Count() == 0) {
+        if (enemiesActive == true & enemies.Count() == 0)
+        {
             enemiesActive = false;
             OnEnemiesDead?.Invoke(this, EventArgs.Empty);
         }
-
     }
 
-    private Transform GetRandomEnemy() {
-        int randomNumber = UnityEngine.Random.Range(1,3);
-        if(randomNumber == 1){
+    private Transform GetRandomEnemy()
+    {
+        int randomNumber = UnityEngine.Random.Range(1, 3);
+        if (randomNumber == 1)
+        {
             return petrifex;
         }
-        else {
+        else
+        {
             return frog;
         }
     }
 
-    public void SpawnEnemies() {
+    public void SpawnEnemies()
+    {
         enemiesActive = true;
-        enemies.Add(Instantiate(GetRandomEnemy(), roomPos + new Vector3(-spawnPointXOfset, 0, -spawnPointZOfset), Quaternion.identity));
-        enemies.Add(Instantiate(GetRandomEnemy(), roomPos + new Vector3(-spawnPointXOfset, 0, spawnPointZOfset), Quaternion.identity));
-        enemies.Add(Instantiate(GetRandomEnemy(), roomPos + new Vector3(spawnPointXOfset, 0, spawnPointZOfset), Quaternion.identity));
-        enemies.Add(Instantiate(GetRandomEnemy(), roomPos + new Vector3(spawnPointXOfset, 0, -spawnPointZOfset), Quaternion.identity));
+        enemies.Add(
+            Instantiate(
+                GetRandomEnemy(),
+                roomPos + new Vector3(-spawnPointXOfset, 0, -spawnPointZOfset),
+                Quaternion.identity
+            )
+        );
+        enemies.Add(
+            Instantiate(
+                GetRandomEnemy(),
+                roomPos + new Vector3(-spawnPointXOfset, 0, spawnPointZOfset),
+                Quaternion.identity
+            )
+        );
+        enemies.Add(
+            Instantiate(
+                GetRandomEnemy(),
+                roomPos + new Vector3(spawnPointXOfset, 0, spawnPointZOfset),
+                Quaternion.identity
+            )
+        );
+        enemies.Add(
+            Instantiate(
+                GetRandomEnemy(),
+                roomPos + new Vector3(spawnPointXOfset, 0, -spawnPointZOfset),
+                Quaternion.identity
+            )
+        );
     }
 }

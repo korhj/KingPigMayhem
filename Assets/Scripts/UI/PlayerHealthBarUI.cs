@@ -6,12 +6,15 @@ using UnityEngine.UI;
 
 public class PlayerHealthBarUI : MonoBehaviour
 {
-    [SerializeField] private Player player;
-    [SerializeField] private Image barImage;
+    [SerializeField]
+    private Player player;
+
+    [SerializeField]
+    private Image barImage;
 
     void Start()
     {
-        player.OnHealthUpdate += Player_OnHealthUpdate; 
+        player.OnHealthUpdate += Player_OnHealthUpdate;
         barImage.fillAmount = 1f;
     }
 
@@ -19,5 +22,4 @@ public class PlayerHealthBarUI : MonoBehaviour
     {
         barImage.fillAmount = e.playerCurrentHealthNormalized;
     }
-
 }
