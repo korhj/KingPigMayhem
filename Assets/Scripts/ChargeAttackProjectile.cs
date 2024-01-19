@@ -39,7 +39,6 @@ public class ChargeAttackProjectile : MonoBehaviour, IAttack
         currentScale = Vector3.Distance(transform.position, startingPos) / maxLength * maxScale;
         transform.localScale = new(1, currentScale, 1);
         transform.eulerAngles = new(0, GetAngle(shootingDir), 90);
-        //Destroy(gameObject, 10f);
     }
 
     private float GetAngle(Vector3 vector)
@@ -67,6 +66,5 @@ public class ChargeAttackProjectile : MonoBehaviour, IAttack
     {
         IEnemy enemy = collider.GetComponent<IEnemy>();
         enemy?.TakeDamage(shootingDir.normalized, knockback, chargeDamageMultiplier * charge);
-        //Destroy(gameObject);
     }
 }
