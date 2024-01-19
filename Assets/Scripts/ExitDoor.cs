@@ -20,18 +20,18 @@ public class ExitDoor : MonoBehaviour
     {
         enemySpawner.OnEnemiesDead += (object sender, EventArgs e) =>
         {
-            Debug.Log(gameObject.GetInstanceID());
-            isActive = true;
+            this.isActive = true;
         };
     }
 
     private void OnTriggerEnter(Collider collider)
     {
-        Debug.Log("ExitDoor trigger " + isActive);
-        if (collider.gameObject == Player.Instance.gameObject & Player.Instance.KeyCollected())
+        if (
+            isActive
+            & collider.gameObject == Player.Instance.gameObject
+            & Player.Instance.KeyCollected()
+        )
         {
-            Debug.Log("Victory!");
-            Debug.Log(gameObject.GetInstanceID());
             OnEnter?.Invoke(this, EventArgs.Empty);
         }
     }

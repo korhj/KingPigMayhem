@@ -16,11 +16,18 @@ public class GameManager : MonoBehaviour
     Transform key;
 
     [SerializeField]
-    ExitDoor exitDoor;
+    ExitDoor exitDoorReference;
 
     //[SerializeField] float scoreIncrease = 10;
 
     public event EventHandler OnStartPlaying;
+
+    //public event EventHandler<OnCurrentRoomChangedEventArgs> OnCurrentRoomChanged;
+
+    //public class OnCurrentRoomChangedEventArgs : EventArgs
+    //{
+    //    public Transform roomTransform;
+    //}
 
     private enum State
     {
@@ -34,10 +41,12 @@ public class GameManager : MonoBehaviour
     private float countdownTimer = 0f;
     private float scoreTimer = 0f;
     private bool gamePaused;
-    private float timeScale;
+    private float defaultTimeScale = 1f;
     private State previousState;
     private int[,] mapArray;
     private Room[,] roomArray;
+    private ExitDoor exitDoor;
+    private Transform currentRoomTransform;
 
     private void Awake()
     {
@@ -60,7 +69,6 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        timeScale = Time.timeScale;
         countdownTimer = 0f;
         scoreTimer = 0f;
         gamePaused = false;
@@ -75,27 +83,34 @@ public class GameManager : MonoBehaviour
         {
             state = State.GameOver;
         };
+
+        SpawnRooms();
+
+        exitDoor = Instantiate(
+            exitDoorReference,
+            roomArray[3, 4].transform.position + new Vector3(0, 1.5f, -7),
+            Quaternion.identity
+        );
+
         exitDoor.OnEnter += (object sender, EventArgs e) =>
         {
-            Debug.Log("GameManager exitDoor.OnEnter");
             state = State.GameOver;
         };
 
-        SpawnRooms();
         SpawnKey();
         SpawnExitDoor();
     }
 
     private void SpawnKey()
     {
-        static List<(int, int)> FindRooms(int[,] matrix)
+        static List<(int, int)> KeySpawnLocations(int[,] matrix)
         {
             var cells = new List<(int, int)>();
             for (int i = 0; i < matrix.GetLength(0); i++)
             {
                 for (int j = 0; j < matrix.GetLength(1); j++)
                 {
-                    if (matrix[i, j] != 0)
+                    if (matrix[i, j] != 0 & i + j != 0)
                     {
                         cells.Add((i, j));
                     }
@@ -104,7 +119,7 @@ public class GameManager : MonoBehaviour
             return cells;
         }
 
-        var roomLocations = FindRooms(mapArray);
+        var roomLocations = KeySpawnLocations(mapArray);
 
         System.Random random = new System.Random();
         int randomIndex = random.Next(roomLocations.Count);
@@ -130,21 +145,17 @@ public class GameManager : MonoBehaviour
         switch (state)
         {
             case State.Countdown:
-                if (countdownTimer >= 1)
+                Time.timeScale = defaultTimeScale;
+                if (countdownTimer >= 2)
                 {
                     state = State.Playing;
                     OnStartPlaying?.Invoke(this, EventArgs.Empty);
+                    roomArray[0, 0].playerEntered();
                 }
                 countdownTimer += Time.deltaTime;
                 break;
             case State.Playing:
-                Time.timeScale = timeScale;
-                if (scoreTimer >= 10)
-                {
-                    //Player.Instance.IncreaseScore(scoreIncrease);
-                    scoreTimer = 0;
-                    roomArray[0, 0].playerEntered();
-                }
+                Time.timeScale = defaultTimeScale;
                 scoreTimer += Time.deltaTime;
                 break;
             case State.Paused:
@@ -181,12 +192,7 @@ public class GameManager : MonoBehaviour
 
     private void SpawnExitDoor()
     {
-        Instantiate(
-            exitDoor.transform,
-            roomArray[3, 4].transform.position - new Vector3(0, 0, 7),
-            Quaternion.identity
-        );
-        roomArray[3, 4].SpawnExit(exitDoor);
+        roomArray[1, 0].SpawnExit(exitDoor);
     }
 
     public Room[] GetAdjacedRooms(Vector3 roomPosition)
@@ -224,5 +230,24 @@ public class GameManager : MonoBehaviour
         }
 
         return roomInDirection;
+    }
+
+    public ExitDoor GetExitDoor()
+    {
+        return exitDoor;
+    }
+
+    public void SetCurrentRoomTransform(Transform roomTransform)
+    {
+        currentRoomTransform = roomTransform;
+        //OnCurrentRoomChanged?.Invoke(
+        //    this,
+        //    new OnCurrentRoomChangedEventArgs { roomTransform = currentRoomTransform }
+        //);
+        Camera.main.transform.position = new Vector3(
+            currentRoomTransform.position.x,
+            Camera.main.transform.position.y,
+            currentRoomTransform.position.z
+        );
     }
 }

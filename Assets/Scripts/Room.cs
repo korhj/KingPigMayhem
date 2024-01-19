@@ -94,10 +94,11 @@ public class Room : MonoBehaviour
 
     public void playerEntered()
     {
-        if (!roomEntered)
-        {
-            roomEntered = true;
-            enemySpawner.SpawnEnemies();
-        }
+        GameManager.Instance.SetCurrentRoomTransform(transform);
+        if (roomEntered)
+            return;
+
+        roomEntered = true;
+        enemySpawner.SpawnEnemies();
     }
 }

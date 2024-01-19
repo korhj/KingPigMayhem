@@ -15,13 +15,16 @@ public class VictoryUI : MonoBehaviour
     private TextMeshProUGUI finalScoreText;
 
     [SerializeField]
-    ExitDoor exitDoor;
+    private GameManager gameManager;
+
+    private ExitDoor exitDoor;
 
     private void Start()
     {
+        exitDoor = gameManager.GetExitDoor();
+
         exitDoor.OnEnter += (object sender, EventArgs e) =>
         {
-            Debug.Log("VictoryUI exitDoor.OnEnter");
             Show();
         };
         playAgainButton.onClick.AddListener(() =>
