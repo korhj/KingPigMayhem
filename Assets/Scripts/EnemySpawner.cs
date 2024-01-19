@@ -20,9 +20,6 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField]
     private float roomHeight;
 
-    [SerializeField]
-    private Room parentRoom;
-
     private List<UnityEngine.Object> enemies;
     private bool enemiesActive = false;
     private float spawnPointXOfset;
@@ -32,11 +29,9 @@ public class EnemySpawner : MonoBehaviour
     private void Start()
     {
         enemies = new List<UnityEngine.Object>();
-        roomPos = parentRoom.transform.position;
+        roomPos = transform.position;
         spawnPointXOfset = roomWidth / 4;
         spawnPointZOfset = roomHeight / 4;
-        //Debug.Log(roomPos + " " + spawnPointXOfset + " " + spawnPointZOfset);
-        //SpawnEnemies();
     }
 
     private void Update()

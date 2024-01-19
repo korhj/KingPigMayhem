@@ -7,7 +7,7 @@ using UnityEngine;
 public class Room : MonoBehaviour
 {
     [SerializeField]
-    EnemySpawner enemySpawner;
+    EnemySpawner enemySpawnerReference;
 
     [SerializeField]
     Door doorUp;
@@ -26,21 +26,24 @@ public class Room : MonoBehaviour
 
     private bool roomEntered;
 
-    //private List<Door> activeDoors;
+    private EnemySpawner enemySpawner;
+
+    private void Awake()
+    {
+        enemySpawner = Instantiate(enemySpawnerReference, transform.position, Quaternion.identity);
+        roomEntered = false;
+    }
 
     private void Start()
     {
-        roomEntered = false;
-        //activeDoors = new List<Door>();
-
         Room[] adjantedRooms = GameManager.Instance.GetAdjacedRooms(transform.position);
 
         if (adjantedRooms[0] != null)
         {
-            //activeDoors.Add(doorUp);
-            doorUp.setPlayerTeleportPoint(
+            doorUp.Setup(
                 adjantedRooms[0],
-                adjantedRooms[0].transform.position - new Vector3(0, 0, 5)
+                adjantedRooms[0].transform.position - new Vector3(0, 0, 5),
+                enemySpawner
             );
         }
         else
@@ -49,10 +52,10 @@ public class Room : MonoBehaviour
         }
         if (adjantedRooms[1] != null)
         {
-            //activeDoors.Add(doorDown);
-            doorDown.setPlayerTeleportPoint(
+            doorDown.Setup(
                 adjantedRooms[1],
-                adjantedRooms[1].transform.position + new Vector3(0, 0, 5)
+                adjantedRooms[1].transform.position + new Vector3(0, 0, 5),
+                enemySpawner
             );
         }
         else
@@ -61,10 +64,10 @@ public class Room : MonoBehaviour
         }
         if (adjantedRooms[2] != null)
         {
-            //activeDoors.Add(doorLeft);
-            doorLeft.setPlayerTeleportPoint(
+            doorLeft.Setup(
                 adjantedRooms[2],
-                adjantedRooms[2].transform.position + new Vector3(14, 0, 0)
+                adjantedRooms[2].transform.position + new Vector3(14, 0, 0),
+                enemySpawner
             );
         }
         else
@@ -73,10 +76,10 @@ public class Room : MonoBehaviour
         }
         if (adjantedRooms[3] != null)
         {
-            //activeDoors.Add(doorRight);
-            doorRight.setPlayerTeleportPoint(
+            doorRight.Setup(
                 adjantedRooms[3],
-                adjantedRooms[3].transform.position - new Vector3(14, 0, 0)
+                adjantedRooms[3].transform.position - new Vector3(14, 0, 0),
+                enemySpawner
             );
         }
         else
@@ -89,6 +92,7 @@ public class Room : MonoBehaviour
 
     public void SpawnExit(ExitDoor exitDoor)
     {
+        Debug.Log(enemySpawner.gameObject.GetInstanceID());
         exitDoor.Setup(enemySpawner);
     }
 

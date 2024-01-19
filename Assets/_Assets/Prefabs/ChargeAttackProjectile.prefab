@@ -180,5 +180,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1b0966252ee527448ba0df9226d8b67, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  chargeAttackSpeed: 2
+  chargeAttackSpeed: 6
   knockback: 10
+  angleInRad: 0.5
+  maxScale: 2.5
+  chargeDamageMultiplier: 2
+  chargeAttackMaxCharge: 4

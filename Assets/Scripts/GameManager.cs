@@ -74,6 +74,7 @@ public class GameManager : MonoBehaviour
         gamePaused = false;
         state = State.Countdown;
         previousState = state;
+
         Player.Instance.OnPlayerDeath += (object sender, EventArgs e) =>
         {
             state = State.GameOver;
@@ -86,11 +87,14 @@ public class GameManager : MonoBehaviour
 
         SpawnRooms();
 
+        Room exitRoom = roomArray[3, 4];
         exitDoor = Instantiate(
             exitDoorReference,
-            roomArray[3, 4].transform.position + new Vector3(0, 1.5f, -7),
+            exitRoom.transform.position + new Vector3(0, 1.5f, -7),
             Quaternion.identity
         );
+
+        exitRoom.SpawnExit(exitDoor);
 
         exitDoor.OnEnter += (object sender, EventArgs e) =>
         {
@@ -98,7 +102,6 @@ public class GameManager : MonoBehaviour
         };
 
         SpawnKey();
-        SpawnExitDoor();
     }
 
     private void SpawnKey()
@@ -188,11 +191,6 @@ public class GameManager : MonoBehaviour
                 }
             }
         }
-    }
-
-    private void SpawnExitDoor()
-    {
-        roomArray[1, 0].SpawnExit(exitDoor);
     }
 
     public Room[] GetAdjacedRooms(Vector3 roomPosition)

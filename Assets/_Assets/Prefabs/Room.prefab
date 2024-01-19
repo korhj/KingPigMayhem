@@ -172,7 +172,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f31eea7e804be66439099ae78008d093, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemySpawner: {fileID: 4250330307652235730}
 --- !u!1 &554864320649803612
 GameObject:
   m_ObjectHideFlags: 0
@@ -345,7 +344,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f31eea7e804be66439099ae78008d093, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemySpawner: {fileID: 4250330307652235730}
 --- !u!1 &3941781997877218054
 GameObject:
   m_ObjectHideFlags: 0
@@ -413,7 +411,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f31eea7e804be66439099ae78008d093, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemySpawner: {fileID: 4250330307652235730}
 --- !u!1 &3981110341380596622
 GameObject:
   m_ObjectHideFlags: 0
@@ -669,7 +666,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f31eea7e804be66439099ae78008d093, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemySpawner: {fileID: 4250330307652235730}
 --- !u!1 &6647313121905331838
 GameObject:
   m_ObjectHideFlags: 0
@@ -986,7 +982,6 @@ Transform:
   - {fileID: 6798330801139701033}
   - {fileID: 3875827963510145733}
   - {fileID: 2103208293757762641}
-  - {fileID: 2019314786161381788}
   - {fileID: 7672354743121031105}
   - {fileID: 9111117663513564293}
   - {fileID: 728903890382043080}
@@ -1006,61 +1001,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e450b2e9c5abd045bc002e6f988377e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemySpawner: {fileID: 4250330307652235730}
+  enemySpawnerReference: {fileID: 6983648717881187022, guid: 3fbb55a57922f914ea0ad929433c016f, type: 3}
   doorUp: {fileID: 8964579785787880026}
   doorDown: {fileID: 8376651545790018650}
   doorLeft: {fileID: 8083156963975329273}
   doorRight: {fileID: 3833182650419936915}
   roomLight: {fileID: 1376376334741106839}
---- !u!1 &8054254990932965721
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2019314786161381788}
-  - component: {fileID: 4250330307652235730}
-  m_Layer: 0
-  m_Name: EnemySpawner
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &2019314786161381788
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8054254990932965721}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 5415700376485924716}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4250330307652235730
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8054254990932965721}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 52ca445ed6499a2478cd839b8522b5a7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  petrifex: {fileID: 7535455101201545560, guid: a68eafa1a9333e543a77aacc24883668, type: 3}
-  frog: {fileID: 4824567027625512672, guid: 58f10a2f907bcc046821a47c9a5136ce, type: 3}
-  roomWidth: 31
-  roomHeight: 13
-  parentRoom: {fileID: 3233194031192461823}
 --- !u!1 &8284961564185478265
 GameObject:
   m_ObjectHideFlags: 0
