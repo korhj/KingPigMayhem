@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,17 +11,24 @@ public class GameManager : MonoBehaviour
     PauseUI pauseUI;
 
     [SerializeField]
-    Room room;
+    Room roomReference;
 
     [SerializeField]
     Transform key;
 
     [SerializeField]
-    ExitDoor exitDoorReference;
+    BossRoomDoor BossRoomDoorReference;
+
+    [SerializeField]
+    BossRoom bossRoomReference;
+
+    [SerializeField]
+    private float cameraMovementSpeed = 5f;
 
     //[SerializeField] float scoreIncrease = 10;
 
     public event EventHandler OnStartPlaying;
+    public event EventHandler OnVictory;
 
     //public event EventHandler<OnCurrentRoomChangedEventArgs> OnCurrentRoomChanged;
 
@@ -44,9 +52,10 @@ public class GameManager : MonoBehaviour
     private float defaultTimeScale = 1f;
     private State previousState;
     private int[,] mapArray;
-    private Room[,] roomArray;
-    private ExitDoor exitDoor;
-    private Transform currentRoomTransform;
+    private IRoom[,] roomArray;
+    private IRoom bossRoom;
+
+    //private BossRoom bossRoom;
 
     private void Awake()
     {
@@ -61,14 +70,15 @@ public class GameManager : MonoBehaviour
             { 1, 0, 1, 0, 0 },
             { 0, 0, 1, 1, 1 },
             { 0, 0, 1, 1, 1 },
-            { 0, 0, 1, 0, 0 }
+            { 0, 0, 1, 0, 2 }
         };
 
-        roomArray = new Room[mapArray.GetLength(0), mapArray.GetLength(1)];
+        roomArray = new IRoom[mapArray.GetLength(0), mapArray.GetLength(1)];
     }
 
     private void Start()
     {
+        MusicController.Instance.PlayMusic();
         countdownTimer = 0f;
         scoreTimer = 0f;
         gamePaused = false;
@@ -86,21 +96,6 @@ public class GameManager : MonoBehaviour
         };
 
         SpawnRooms();
-
-        Room exitRoom = roomArray[3, 4];
-        exitDoor = Instantiate(
-            exitDoorReference,
-            exitRoom.transform.position + new Vector3(0, 1.5f, -7),
-            Quaternion.identity
-        );
-
-        exitRoom.SpawnExit(exitDoor);
-
-        exitDoor.OnEnter += (object sender, EventArgs e) =>
-        {
-            state = State.GameOver;
-        };
-
         SpawnKey();
     }
 
@@ -113,7 +108,7 @@ public class GameManager : MonoBehaviour
             {
                 for (int j = 0; j < matrix.GetLength(1); j++)
                 {
-                    if (matrix[i, j] != 0 & i + j != 0)
+                    if (matrix[i, j] != 0 & i + j == 1)
                     {
                         cells.Add((i, j));
                     }
@@ -153,7 +148,7 @@ public class GameManager : MonoBehaviour
                 {
                     state = State.Playing;
                     OnStartPlaying?.Invoke(this, EventArgs.Empty);
-                    roomArray[0, 0].playerEntered();
+                    roomArray[0, 0].PlayerEntered(transform.position);
                 }
                 countdownTimer += Time.deltaTime;
                 break;
@@ -177,13 +172,22 @@ public class GameManager : MonoBehaviour
         {
             for (int j = 0; j < mapArray.GetLength(1); j++)
             {
-                if (mapArray[i, j] != 0)
+                if (mapArray[i, j] == 1)
                 {
                     roomArray[i, j] = Instantiate(
-                        room,
+                        roomReference,
                         new Vector3(j * 35, 0, -i * 20),
                         Quaternion.identity
                     );
+                }
+                else if (mapArray[i, j] == 2)
+                {
+                    roomArray[i, j] = Instantiate(
+                        bossRoomReference,
+                        new Vector3(j * 35, 0, -i * 20),
+                        Quaternion.identity
+                    );
+                    bossRoom = roomArray[i, j];
                 }
                 else
                 {
@@ -193,9 +197,9 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public Room[] GetAdjacedRooms(Vector3 roomPosition)
+    public IRoom[] GetAdjacedRooms(Vector3 roomPosition)
     {
-        Room[] roomInDirection = new Room[4] { null, null, null, null };
+        IRoom[] roomInDirection = new IRoom[4] { null, null, null, null };
         int j = (int)roomPosition.x / 35;
         int i = -(int)roomPosition.z / 20;
         if (i - 1 >= 0)
@@ -230,22 +234,34 @@ public class GameManager : MonoBehaviour
         return roomInDirection;
     }
 
-    public ExitDoor GetExitDoor()
+    public void SetCurrentRoomTransform(Transform roomTransform, Vector3 direction)
     {
-        return exitDoor;
+        Camera.main.transform.position =
+            new Vector3(
+                roomTransform.position.x,
+                Camera.main.transform.position.y,
+                roomTransform.position.z
+            ) - direction;
+        StartCoroutine(MoveCameraToPosition(Camera.main.transform.position + direction));
     }
 
-    public void SetCurrentRoomTransform(Transform roomTransform)
+    private IEnumerator MoveCameraToPosition(Vector3 targetPosition)
     {
-        currentRoomTransform = roomTransform;
-        //OnCurrentRoomChanged?.Invoke(
-        //    this,
-        //    new OnCurrentRoomChangedEventArgs { roomTransform = currentRoomTransform }
-        //);
-        Camera.main.transform.position = new Vector3(
-            currentRoomTransform.position.x,
-            Camera.main.transform.position.y,
-            currentRoomTransform.position.z
-        );
+        // Continue the loop until the camera reaches the target position
+        while (Camera.main.transform.position != targetPosition)
+        {
+            // Move camera towards the target position
+            Camera.main.transform.position = Vector3.MoveTowards(
+                Camera.main.transform.position,
+                targetPosition,
+                cameraMovementSpeed * Time.deltaTime
+            );
+            yield return null; // Wait for the next frame
+        }
+    }
+
+    public void BossKilled()
+    {
+        OnVictory?.Invoke(this, EventArgs.Empty);
     }
 }

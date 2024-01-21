@@ -3,25 +3,36 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class EnemyHealthBarUI : MonoBehaviour {
+public class EnemyHealthBarUI : MonoBehaviour
+{
+    [SerializeField]
+    private GameObject hasEnemyHealthBarGameObject;
 
-    [SerializeField] private GameObject hasEnemyHealthBarGameObject;
-    [SerializeField] private Image barImage;
+    [SerializeField]
+    private Image barImage;
 
     private IHasEnemyHealthBar hasEnemyHealthBar;
 
-    void Start() {
+    void Start()
+    {
         hasEnemyHealthBar = hasEnemyHealthBarGameObject.GetComponent<IHasEnemyHealthBar>();
-        if (hasEnemyHealthBar == null) {
-            Debug.LogError("GameObject " + hasEnemyHealthBarGameObject.name + "does not implement IHasEnemyHealthBar");
+        if (hasEnemyHealthBar == null)
+        {
+            Debug.LogError(
+                "GameObject "
+                    + hasEnemyHealthBarGameObject.name
+                    + "does not implement IHasEnemyHealthBar"
+            );
         }
-        hasEnemyHealthBar.OnHealthUpdate += HasEnemyHealthBar_OnHealthUpdate; 
+        hasEnemyHealthBar.OnHealthUpdate += HasEnemyHealthBar_OnHealthUpdate;
         barImage.fillAmount = 1f;
     }
 
-    private void HasEnemyHealthBar_OnHealthUpdate(object sender, IHasEnemyHealthBar.OnHealthUpdateEventArgs e) {
-
+    private void HasEnemyHealthBar_OnHealthUpdate(
+        object sender,
+        IHasEnemyHealthBar.OnHealthUpdateEventArgs e
+    )
+    {
         barImage.fillAmount = e.enemyCurrentHealthNormalized;
     }
-
 }

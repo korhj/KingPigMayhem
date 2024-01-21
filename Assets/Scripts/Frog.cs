@@ -8,6 +8,9 @@ public class Frog : MonoBehaviour, IEnemy, IHasEnemyHealthBar
     public event EventHandler<IHasEnemyHealthBar.OnHealthUpdateEventArgs> OnHealthUpdate;
 
     [SerializeField]
+    GameObject frogVisual;
+
+    [SerializeField]
     private float jumpSpeed = 10f;
 
     [SerializeField]
@@ -37,31 +40,26 @@ public class Frog : MonoBehaviour, IEnemy, IHasEnemyHealthBar
     private float jumpEnded = 0f;
     private bool currentlyJumping = true;
     private Vector3 moveDir;
-    private bool playerIsAlive = true;
+    private Vector3 frogLookDir;
 
     private void Start()
     {
         frogHealth = frogMaxHealth;
         frogRigidbody = GetComponent<Rigidbody>();
         moveDir = GetMovementDir();
-        Player.Instance.OnPlayerDeath += (object sender, EventArgs e) =>
-        {
-            playerIsAlive = false;
-        };
     }
 
     private void Update() { }
 
     private void FixedUpdate()
     {
-        if (!playerIsAlive)
-            return;
-
         if (currentlyJumping & jumpStarted < jumpDuration)
         {
             jumpStarted += Time.fixedDeltaTime;
             float moveDistance = jumpSpeed * Time.fixedDeltaTime;
             frogRigidbody.MovePosition(transform.position + moveDir * moveDistance);
+            frogLookDir = Quaternion.Euler(0, -90, 0) * moveDir;
+            frogVisual.transform.rotation = Quaternion.LookRotation(frogLookDir, transform.up);
         }
         else if (currentlyJumping & jumpStarted > jumpDuration)
         {

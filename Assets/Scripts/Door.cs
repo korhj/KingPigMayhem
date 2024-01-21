@@ -9,9 +9,9 @@ public class Door : MonoBehaviour
 {
     private bool isActive;
     private Vector3 playerTeleportPoint;
-    private Room connectedRoom;
+    private IRoom connectedRoom;
 
-    public void Setup(Room room, Vector3 point, EnemySpawner enemySpawner)
+    public void Setup(IRoom room, Vector3 point, ISpawner enemySpawner)
     {
         isActive = false;
         enemySpawner.OnEnemiesDead += (object sender, EventArgs e) =>
@@ -28,7 +28,7 @@ public class Door : MonoBehaviour
         if (isActive & collider.gameObject == Player.Instance.gameObject)
         {
             Player.Instance.MovePlayerThroughDoor(playerTeleportPoint);
-            connectedRoom.playerEntered();
+            connectedRoom.PlayerEntered(transform.position);
         }
     }
 }

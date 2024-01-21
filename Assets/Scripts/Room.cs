@@ -4,105 +4,115 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class Room : MonoBehaviour
+public class Room : MonoBehaviour, IRoom
 {
     [SerializeField]
     EnemySpawner enemySpawnerReference;
 
     [SerializeField]
-    Door doorUp;
+    private float doorXoffset;
 
     [SerializeField]
-    Door doorDown;
+    private float doorYffset;
 
     [SerializeField]
-    Door doorLeft;
-
-    [SerializeField]
-    Door doorRight;
+    private float doorZffset;
 
     [SerializeField]
     Light roomLight;
 
+    [SerializeField]
+    Door doorReference;
+
+    [SerializeField]
+    BossRoomDoor bossRoomDoorReference;
+
     private bool roomEntered;
 
     private EnemySpawner enemySpawner;
+    private (Vector3, Quaternion)[] doorOffsets;
 
     private void Awake()
     {
         enemySpawner = Instantiate(enemySpawnerReference, transform.position, Quaternion.identity);
         roomEntered = false;
+
+        doorOffsets = new (Vector3 Position, Quaternion Rotation)[]
+        {
+            (new Vector3(0, doorYffset, doorZffset), Quaternion.Euler(0, 0, 0)), // Up: Position and Rotation
+            (new Vector3(0, doorYffset, -doorZffset), Quaternion.Euler(0, 0, 0)), // Down: Position and Rotation
+            (new Vector3(-doorXoffset, doorYffset, 0), Quaternion.Euler(0, 90, 0)), // Left: Position and Rotation
+            (new Vector3(doorXoffset, doorYffset, 0), Quaternion.Euler(0, -90, 0)) // Right: Position and Rotation
+        };
     }
 
     private void Start()
     {
-        Room[] adjantedRooms = GameManager.Instance.GetAdjacedRooms(transform.position);
+        IRoom[] adjantedRooms = GameManager.Instance.GetAdjacedRooms(transform.position);
 
-        if (adjantedRooms[0] != null)
+        for (int i = 0; i < adjantedRooms.Length; i++)
         {
-            doorUp.Setup(
-                adjantedRooms[0],
-                adjantedRooms[0].transform.position - new Vector3(0, 0, 5),
-                enemySpawner
-            );
-        }
-        else
-        {
-            doorUp.gameObject.SetActive(false);
-        }
-        if (adjantedRooms[1] != null)
-        {
-            doorDown.Setup(
-                adjantedRooms[1],
-                adjantedRooms[1].transform.position + new Vector3(0, 0, 5),
-                enemySpawner
-            );
-        }
-        else
-        {
-            doorDown.gameObject.SetActive(false);
-        }
-        if (adjantedRooms[2] != null)
-        {
-            doorLeft.Setup(
-                adjantedRooms[2],
-                adjantedRooms[2].transform.position + new Vector3(14, 0, 0),
-                enemySpawner
-            );
-        }
-        else
-        {
-            doorLeft.gameObject.SetActive(false);
-        }
-        if (adjantedRooms[3] != null)
-        {
-            doorRight.Setup(
-                adjantedRooms[3],
-                adjantedRooms[3].transform.position - new Vector3(14, 0, 0),
-                enemySpawner
-            );
-        }
-        else
-        {
-            doorRight.gameObject.SetActive(false);
-        }
+            if (adjantedRooms[i] != null)
+            {
+                if (adjantedRooms[i] is BossRoom)
+                {
+                    BossRoomDoor door = Instantiate(
+                        bossRoomDoorReference,
+                        transform.position + doorOffsets[i].Item1,
+                        doorOffsets[i].Item2
+                    );
+                    door.Setup(
+                        adjantedRooms[i],
+                        GetPlayerSpawnPoint(
+                            adjantedRooms[i].GetRoomPosition(),
+                            doorOffsets[i].Item1
+                        ),
+                        enemySpawner
+                    );
+                }
+                else
+                {
+                    Door door = Instantiate(
+                        doorReference,
+                        transform.position + doorOffsets[i].Item1,
+                        doorOffsets[i].Item2
+                    );
+                    door.Setup(
+                        adjantedRooms[i],
+                        GetPlayerSpawnPoint(
+                            adjantedRooms[i].GetRoomPosition(),
+                            doorOffsets[i].Item1
+                        ),
+                        enemySpawner
+                    );
+                }
+            }
 
-        roomLight.color = UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
+            roomLight.color = UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
+        }
     }
 
-    public void SpawnExit(ExitDoor exitDoor)
+    private Vector3 GetPlayerSpawnPoint(Vector3 roomPos, Vector3 offset)
     {
-        Debug.Log(enemySpawner.gameObject.GetInstanceID());
-        exitDoor.Setup(enemySpawner);
+        Vector3 playerSpawnPoint = (roomPos - (offset * 0.8f));
+        playerSpawnPoint.y = 0;
+        return playerSpawnPoint;
     }
 
-    public void playerEntered()
+    public void PlayerEntered(Vector3 doorPos)
     {
-        GameManager.Instance.SetCurrentRoomTransform(transform);
+        doorPos.y = 0;
+        Vector3 direction = (transform.position - doorPos).normalized;
+        GameManager.Instance.SetCurrentRoomTransform(transform, direction);
         if (roomEntered)
             return;
 
         roomEntered = true;
         enemySpawner.SpawnEnemies();
+    }
+
+    public Vector3 GetRoomPosition()
+    {
+        return transform.position;
     }
 }

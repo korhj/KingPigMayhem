@@ -4,12 +4,12 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class EnemySpawner : MonoBehaviour
+public class EnemySpawner : MonoBehaviour, ISpawner
 {
     public event EventHandler OnEnemiesDead;
 
     [SerializeField]
-    private Transform petrifex;
+    private Transform pig;
 
     [SerializeField]
     private Transform frog;
@@ -49,7 +49,7 @@ public class EnemySpawner : MonoBehaviour
         int randomNumber = UnityEngine.Random.Range(1, 3);
         if (randomNumber == 1)
         {
-            return petrifex;
+            return pig;
         }
         else
         {

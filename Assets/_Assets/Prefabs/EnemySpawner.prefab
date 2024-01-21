@@ -44,8 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52ca445ed6499a2478cd839b8522b5a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  petrifex: {fileID: 7535455101201545560, guid: a68eafa1a9333e543a77aacc24883668, type: 3}
+  pig: {fileID: 7535455101201545560, guid: a68eafa1a9333e543a77aacc24883668, type: 3}
   frog: {fileID: 4824567027625512672, guid: 58f10a2f907bcc046821a47c9a5136ce, type: 3}
   roomWidth: 31
   roomHeight: 13
-  parentRoom: {fileID: 0}

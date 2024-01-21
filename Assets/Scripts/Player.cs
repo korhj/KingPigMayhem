@@ -134,7 +134,6 @@ public class Player : MonoBehaviour
             }
             chargeAttackVisual.SetActive(false);
         }
-
         Vector2 aimInputVector = gameInput.GetAimVectorNormalized();
         Vector3 aimDir = new Vector3(aimInputVector.x, 0f, aimInputVector.y).normalized;
         if (aimDir.magnitude > 0.9 & chargeAttackDir.magnitude < 0.9)
