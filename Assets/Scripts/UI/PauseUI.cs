@@ -7,35 +7,44 @@ using UnityEngine.UI;
 
 public class PauseUI : MonoBehaviour
 {
-
     public event EventHandler OnGamePaused;
 
-    [SerializeField] private Button pauseButton;
-    [SerializeField] private Button continueButton;
-    [SerializeField] private Button mainMenuButton;
+    [SerializeField]
+    private Button pauseButton;
 
-    private void Start() {
+    [SerializeField]
+    private Button continueButton;
+
+    [SerializeField]
+    private Button mainMenuButton;
+
+    private void Start()
+    {
         //Player.Instance.OnPlayerDeath += (object sender, EventArgs e) => {Show();};
-        continueButton.onClick.AddListener( ()=> {
+        continueButton.onClick.AddListener(() =>
+        {
             OnGamePaused?.Invoke(this, EventArgs.Empty);
             Hide();
         });
-        mainMenuButton.onClick.AddListener( ()=> {
+        mainMenuButton.onClick.AddListener(() =>
+        {
             Loader.Load(Loader.Scene.MainMenuScene);
         });
-        pauseButton.onClick.AddListener( () => {
+        pauseButton.onClick.AddListener(() =>
+        {
             OnGamePaused?.Invoke(this, EventArgs.Empty);
             Show();
         });
         Hide();
-        
     }
 
-    private void Show() {
+    private void Show()
+    {
         gameObject.SetActive(true);
     }
 
-    private void Hide() {
+    private void Hide()
+    {
         gameObject.SetActive(false);
     }
 }

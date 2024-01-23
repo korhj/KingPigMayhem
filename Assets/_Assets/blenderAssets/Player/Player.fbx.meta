@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: b740a3ead4fc7224cbf29c26b852c1fa
+guid: 7667905c67ccb2d489a0188d4184879e
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -7,18 +7,23 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: Eye
-    second: {fileID: 2100000, guid: 4af28d5793894674fa10161d4f84c129, type: 2}
+      name: Material.001
+    second: {fileID: 2100000, guid: 90f5163c59723b0419500d5c34e6b494, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: PigSkin
-    second: {fileID: 2100000, guid: 1a43fb9a5fddf4b48a4d718d0e1a4159, type: 2}
+      name: Material.002
+    second: {fileID: 2100000, guid: 8b7c6fb4115ab394d973c06aca720e57, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: Pupil
-    second: {fileID: 2100000, guid: 0573e63ab084c2d469b0c9a054e8b43e, type: 2}
+      name: StaffMaterial
+    second: {fileID: 2100000, guid: 11824d4604d19b5409121d6ec5b2121f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: StaffStoneMaterial
+    second: {fileID: 2100000, guid: b43aa2757cbd1ef4e8dc599f6b7d38af, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

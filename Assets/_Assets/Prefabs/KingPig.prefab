@@ -280,8 +280,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: KingPig
       objectReference: {fileID: 0}
+    - target: {fileID: 5866666021909216657, guid: 064f9253b2848504c84d8d38b948da44, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: c6faac28bdb952c4e910d8c6ebf2d0d5, type: 2}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: -8700617353114198275, guid: 064f9253b2848504c84d8d38b948da44, type: 3}
+    - {fileID: 65702495048144492, guid: 064f9253b2848504c84d8d38b948da44, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 064f9253b2848504c84d8d38b948da44, type: 3}

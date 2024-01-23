@@ -3,7 +3,22 @@ guid: a55ee888c6db4a1479b143d346206cc5
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: EyeMaterial
+    second: {fileID: 2100000, guid: 2402774013141d94882e086aa48cac3f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: FrogSkinMaterial
+    second: {fileID: 2100000, guid: a0822d4a4b34a624daf8b61a80c3ebb7, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: PupilMaterial
+    second: {fileID: 2100000, guid: 3b0c52c4abaf34049b2b18e19b44b219, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -99,7 +114,7 @@ ModelImporter:
   autoGenerateAvatarMappingIfUnspecified: 1
   animationType: 2
   humanoidOversampling: 1
-  avatarSetup: 0
+  avatarSetup: 1
   addHumanoidExtraRootOnlyWhenUsingAvatar: 1
   importBlendShapeDeformPercent: 1
   remapMaterialsIfMaterialImportModeIsNone: 0

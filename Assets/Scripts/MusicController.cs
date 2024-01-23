@@ -13,7 +13,7 @@ public class MusicController : MonoBehaviour
     AudioClip bossMusic;
     private AudioSource audioSource;
 
-    void Start()
+    void Awake()
     {
         if (Instance != null)
         {

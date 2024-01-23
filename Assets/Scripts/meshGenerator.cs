@@ -3,18 +3,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
 [RequireComponent(typeof(MeshFilter))]
-public class meshGenerator : MonoBehaviour {
+public class meshGenerator : MonoBehaviour
+{
+    [SerializeField]
+    float angleInRad = 0.5f;
 
-    [SerializeField] float angleInRad = 0.5f;
-    [SerializeField] float length = 1f;
-    
+    [SerializeField]
+    float length = 1f;
+
     Mesh mesh;
     Vector3[] vertices;
     int[] triangles;
 
-    private void Start() {
+    private void Start()
+    {
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
 
@@ -30,13 +33,20 @@ public class meshGenerator : MonoBehaviour {
         mesh.triangles = triangles;
     }
 
-    void CreateTriangleMesh(float length) {
+    void CreateTriangleMesh(float length)
+    {
         float width = Mathf.Tan(angleInRad) * length;
-        vertices = new Vector3[] {new Vector3(0,0,0), new Vector3(-width,0,length), new Vector3(width,0,length)};
-        triangles = new int[] {0, 1, 2};
+        vertices = new Vector3[]
+        {
+            new Vector3(0, 0, 0),
+            new Vector3(-width, 0, length),
+            new Vector3(width, 0, length)
+        };
+        triangles = new int[] { 0, 1, 2 };
     }
 
-    public float GetAngleInRad() {
+    public float GetAngleInRad()
+    {
         return angleInRad;
     }
 }

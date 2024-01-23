@@ -6,9 +6,13 @@ using UnityEngine;
 public class Frog : MonoBehaviour, IEnemy, IHasEnemyHealthBar
 {
     public event EventHandler<IHasEnemyHealthBar.OnHealthUpdateEventArgs> OnHealthUpdate;
+    public event EventHandler<EventArgs> OnJump;
 
     [SerializeField]
     GameObject frogVisual;
+
+    [SerializeField]
+    EnemyHealthBarUI enemyHealthBarUI;
 
     [SerializeField]
     private float jumpSpeed = 10f;
@@ -34,6 +38,8 @@ public class Frog : MonoBehaviour, IEnemy, IHasEnemyHealthBar
     [SerializeField]
     private int scoreIncrease = 10;
 
+    private Animator animator;
+
     private float frogHealth;
     private Rigidbody frogRigidbody;
     private float jumpStarted = 0f;
@@ -44,6 +50,8 @@ public class Frog : MonoBehaviour, IEnemy, IHasEnemyHealthBar
 
     private void Start()
     {
+        animator = GetComponent<Animator>();
+
         frogHealth = frogMaxHealth;
         frogRigidbody = GetComponent<Rigidbody>();
         moveDir = GetMovementDir();
@@ -58,8 +66,7 @@ public class Frog : MonoBehaviour, IEnemy, IHasEnemyHealthBar
             jumpStarted += Time.fixedDeltaTime;
             float moveDistance = jumpSpeed * Time.fixedDeltaTime;
             frogRigidbody.MovePosition(transform.position + moveDir * moveDistance);
-            frogLookDir = Quaternion.Euler(0, -90, 0) * moveDir;
-            frogVisual.transform.rotation = Quaternion.LookRotation(frogLookDir, transform.up);
+            frogRigidbody.transform.rotation = Quaternion.LookRotation(-moveDir, transform.up);
         }
         else if (currentlyJumping & jumpStarted > jumpDuration)
         {
@@ -73,6 +80,7 @@ public class Frog : MonoBehaviour, IEnemy, IHasEnemyHealthBar
         }
         else if (!currentlyJumping & jumpEnded > timeBetweenJumps)
         {
+            OnJump?.Invoke(this, EventArgs.Empty);
             currentlyJumping = true;
             jumpStarted = 0f;
             moveDir = GetMovementDir();
@@ -81,6 +89,10 @@ public class Frog : MonoBehaviour, IEnemy, IHasEnemyHealthBar
         {
             Debug.LogError("Error in frog jumping logic");
         }
+        enemyHealthBarUI.transform.SetPositionAndRotation(
+            frogRigidbody.transform.position + new Vector3(0, 2.5f, 1),
+            Quaternion.Euler(90, 0, 0)
+        );
     }
 
     private Vector3 GetMovementDir()
