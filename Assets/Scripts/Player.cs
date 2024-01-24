@@ -96,6 +96,7 @@ public class Player : MonoBehaviour
     {
         if (!playerIsAlive)
             return;
+
         Vector2 movementInputVector = gameInput.GetMovementVectorNormalized();
         Vector3 moveDir = new Vector3(movementInputVector.x, 0f, movementInputVector.y).normalized;
         float moveDistance = moveSpeed * Time.fixedDeltaTime;
@@ -107,6 +108,7 @@ public class Player : MonoBehaviour
             0f,
             chargeAttackInputVector.y
         ).normalized;
+
         if (chargeAttackDir.magnitude > 0.9)
         {
             chargeAttackVisual.SetActive(true);
@@ -134,6 +136,7 @@ public class Player : MonoBehaviour
             }
             chargeAttackVisual.SetActive(false);
         }
+
         Vector2 aimInputVector = gameInput.GetAimVectorNormalized();
         Vector3 aimDir = new Vector3(aimInputVector.x, 0f, aimInputVector.y).normalized;
         if (aimDir.magnitude > 0.9 & chargeAttackDir.magnitude < 0.9)
@@ -143,6 +146,11 @@ public class Player : MonoBehaviour
         }
         timeSinceDamage += Time.fixedDeltaTime;
         timeSinceAttack += Time.fixedDeltaTime;
+
+        if (chargeAttackDir.magnitude == 0 & aimDir.magnitude == 0)
+        {
+            playerRigidbody.rotation = Quaternion.LookRotation(moveDir, transform.up);
+        }
     }
 
     private void OnCollisionEnter(Collision collision)

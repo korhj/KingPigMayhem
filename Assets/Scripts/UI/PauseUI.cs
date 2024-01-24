@@ -18,6 +18,15 @@ public class PauseUI : MonoBehaviour
     [SerializeField]
     private Button mainMenuButton;
 
+    [SerializeField]
+    private Button volumeButton;
+
+    [SerializeField]
+    private Sprite volumeOnIcon;
+
+    [SerializeField]
+    private Sprite volumeOffIcon;
+
     private void Start()
     {
         //Player.Instance.OnPlayerDeath += (object sender, EventArgs e) => {Show();};
@@ -35,6 +44,10 @@ public class PauseUI : MonoBehaviour
             OnGamePaused?.Invoke(this, EventArgs.Empty);
             Show();
         });
+        volumeButton.onClick.AddListener(() =>
+        {
+            MuteVolume();
+        });
         Hide();
     }
 
@@ -46,5 +59,17 @@ public class PauseUI : MonoBehaviour
     private void Hide()
     {
         gameObject.SetActive(false);
+    }
+
+    private void MuteVolume()
+    {
+        bool muted = MusicController.Instance.Mute();
+
+        if (muted)
+        {
+            volumeButton.image.sprite = volumeOffIcon;
+            return;
+        }
+        volumeButton.image.sprite = volumeOnIcon;
     }
 }

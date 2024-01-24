@@ -13,6 +13,9 @@ public class MusicController : MonoBehaviour
     AudioClip bossMusic;
     private AudioSource audioSource;
 
+    private float volume;
+    private bool muted;
+
     void Awake()
     {
         if (Instance != null)
@@ -21,6 +24,7 @@ public class MusicController : MonoBehaviour
         }
         Instance = this;
         audioSource = GetComponent<AudioSource>();
+        volume = audioSource.volume;
     }
 
     public void PlayMusic()
@@ -40,5 +44,25 @@ public class MusicController : MonoBehaviour
         audioSource.Stop();
         audioSource.clip = bossMusic;
         audioSource.Play();
+    }
+
+    public bool Mute()
+    {
+        if (muted)
+        {
+            audioSource.volume = volume;
+            muted = false;
+            return muted;
+        }
+
+        muted = true;
+        volume = audioSource.volume;
+        audioSource.volume = 0;
+        return muted;
+    }
+
+    public void SetVolume(float volume)
+    {
+        audioSource.volume = volume;
     }
 }
