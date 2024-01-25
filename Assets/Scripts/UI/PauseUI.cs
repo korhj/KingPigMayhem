@@ -18,22 +18,8 @@ public class PauseUI : MonoBehaviour
     [SerializeField]
     private Button mainMenuButton;
 
-    [SerializeField]
-    private Button volumeButton;
-
-    [SerializeField]
-    private Slider volumeSlider;
-
-    [SerializeField]
-    private Sprite volumeOnIcon;
-
-    [SerializeField]
-    private Sprite volumeOffIcon;
-
     private void Start()
     {
-        volumeSlider.value = MusicController.Instance.GetVolume();
-
         continueButton.onClick.AddListener(() =>
         {
             OnGamePaused?.Invoke(this, EventArgs.Empty);
@@ -51,23 +37,6 @@ public class PauseUI : MonoBehaviour
             Show();
         });
 
-        volumeButton.onClick.AddListener(() =>
-        {
-            MuteVolume();
-        });
-
-        volumeSlider.onValueChanged.AddListener(
-            (sliderValue) =>
-            {
-                MusicController.Instance.SetVolume(sliderValue);
-            }
-        );
-
-        MusicController.Instance.OnVolumeChanged += (object sender, EventArgs e) =>
-        {
-            volumeButton.image.sprite = volumeOnIcon;
-        };
-
         Hide();
     }
 
@@ -79,17 +48,5 @@ public class PauseUI : MonoBehaviour
     private void Hide()
     {
         gameObject.SetActive(false);
-    }
-
-    private void MuteVolume()
-    {
-        bool muted = MusicController.Instance.Mute();
-
-        if (muted)
-        {
-            volumeButton.image.sprite = volumeOffIcon;
-            return;
-        }
-        volumeButton.image.sprite = volumeOnIcon;
     }
 }

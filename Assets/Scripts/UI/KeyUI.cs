@@ -14,7 +14,6 @@ public class KeyUI : MonoBehaviour
 
     private void KeyUI_OnKeyPickup(object sender, EventArgs e)
     {
-        Debug.Log("Key picked up");
         gameObject.SetActive(true);
     }
 }
