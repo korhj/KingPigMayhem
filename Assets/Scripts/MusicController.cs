@@ -1,10 +1,14 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class MusicController : MonoBehaviour
 {
+    private const string PLAYERPREFS_VOLUME = "PlayerPrefsVolume";
+
     public static MusicController Instance { get; private set; }
+    public event EventHandler OnVolumeChanged;
 
     [SerializeField]
     AudioClip music;
@@ -13,7 +17,7 @@ public class MusicController : MonoBehaviour
     AudioClip bossMusic;
     private AudioSource audioSource;
 
-    private float volume;
+    static float volume;
     private bool muted;
 
     void Awake()
@@ -24,7 +28,8 @@ public class MusicController : MonoBehaviour
         }
         Instance = this;
         audioSource = GetComponent<AudioSource>();
-        volume = audioSource.volume;
+        volume = PlayerPrefs.GetFloat(PLAYERPREFS_VOLUME, 0.5f);
+        audioSource.volume = volume;
     }
 
     public void PlayMusic()
@@ -61,8 +66,17 @@ public class MusicController : MonoBehaviour
         return muted;
     }
 
-    public void SetVolume(float volume)
+    public void SetVolume(float sliderValue)
     {
-        audioSource.volume = volume;
+        OnVolumeChanged?.Invoke(this, EventArgs.Empty);
+        audioSource.volume = sliderValue;
+
+        PlayerPrefs.SetFloat(PLAYERPREFS_VOLUME, sliderValue);
+        PlayerPrefs.Save();
+    }
+
+    public float GetVolume()
+    {
+        return audioSource.volume;
     }
 }

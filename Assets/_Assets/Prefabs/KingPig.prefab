@@ -101,9 +101,10 @@ MonoBehaviour:
   enemyHealthBarUI: {fileID: 3061448771549556528}
   moveSpeed: 3
   chargeSpeed: 9
-  kingPigMaxHealth: 100
+  kingPigMaxHealth: 60
   kingPigDamage: 3
   scoreIncrease: 100
+  maxIdleTime: 1.5
   chargeMaxCooldown: 3
   chargeMaxPreparation: 0.5
   chargeMaxDuration: 1

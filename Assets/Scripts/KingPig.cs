@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data.Common;
 using UnityEngine;
+using UnityEngine.InputSystem.Controls;
 
 public class KingPig : MonoBehaviour, IEnemy, IHasEnemyHealthBar
 {
@@ -24,7 +25,10 @@ public class KingPig : MonoBehaviour, IEnemy, IHasEnemyHealthBar
     private float kingPigDamage = 1;
 
     [SerializeField]
-    private int scoreIncrease = 10;
+    private int scoreIncrease = 50;
+
+    [SerializeField]
+    private float idleTime;
 
     [SerializeField]
     private float chargeMaxCooldown;
@@ -41,6 +45,7 @@ public class KingPig : MonoBehaviour, IEnemy, IHasEnemyHealthBar
     private float chargeCooldown;
     private float chargePreparation;
     private float chargeDuration;
+
     private Vector3 chargeDir;
 
     private enum KingPigStatus
@@ -56,9 +61,9 @@ public class KingPig : MonoBehaviour, IEnemy, IHasEnemyHealthBar
 
     private void Start()
     {
-        kingPigStatus = KingPigStatus.moving;
+        kingPigStatus = KingPigStatus.preparing;
         chargeCooldown = chargeMaxCooldown;
-        chargePreparation = chargeMaxPreparation;
+        chargePreparation = idleTime;
         chargeDuration = chargeMaxDuration;
         chargeDir = new Vector3(0, 0, 0);
         kingPigHealth = kingPigMaxHealth;
@@ -70,8 +75,6 @@ public class KingPig : MonoBehaviour, IEnemy, IHasEnemyHealthBar
         };
         */
     }
-
-    private void Update() { }
 
     private void FixedUpdate()
     {

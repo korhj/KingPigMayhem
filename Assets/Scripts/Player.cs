@@ -147,7 +147,7 @@ public class Player : MonoBehaviour
         timeSinceDamage += Time.fixedDeltaTime;
         timeSinceAttack += Time.fixedDeltaTime;
 
-        if (chargeAttackDir.magnitude == 0 & aimDir.magnitude == 0)
+        if (chargeAttackDir.magnitude == 0 & aimDir.magnitude == 0 & moveDir.magnitude != 0)
         {
             playerRigidbody.rotation = Quaternion.LookRotation(moveDir, transform.up);
         }
