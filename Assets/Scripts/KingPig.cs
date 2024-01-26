@@ -153,7 +153,6 @@ public class KingPig : MonoBehaviour, IEnemy, IHasEnemyHealthBar
             transform.position - currentRoom.GetRoomPosition() - transform.right * 2f;
 
         List<(GameObject, Vector3)> summonedPigs = new();
-        Debug.Log(rightSide + " " + leftSide);
         if (pigGameObject.GetComponent<IEnemy>() == null)
             Debug.LogError("Invalid Pig gameObject");
         summonedPigs.Add((pigGameObject, rightSide));
