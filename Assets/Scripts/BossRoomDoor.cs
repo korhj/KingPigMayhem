@@ -11,12 +11,12 @@ public class BossRoomDoor : MonoBehaviour
     private Vector3 playerTeleportPoint;
     private IRoom connectedRoom;
 
-    public void Setup(IRoom room, Vector3 point, ISpawner enemySpawner)
+    public void Setup(IRoom room, Vector3 point, EnemySpawner enemySpawner)
     {
         isActive = false;
-        enemySpawner.OnEnemiesDead += (object sender, EventArgs e) =>
+        enemySpawner.OnEnemiesActive += (object sender, EnemySpawner.OnEnemiesActiveEventArgs e) =>
         {
-            isActive = true;
+            isActive = !e.active;
         };
         playerTeleportPoint = point;
         connectedRoom = room;

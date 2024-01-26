@@ -729,7 +729,7 @@ MonoBehaviour:
   gameInput: {fileID: 157320496}
   playerMaxHealth: 10
   invulnerabilityTime: 1
-  attackSpeed: 1
+  attackSpeed: 0.1
   chargeAttackVisual: {fileID: 1313538145}
   chargeAttackMaxCharge: 4
   shootDamage: 5

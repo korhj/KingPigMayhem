@@ -25,17 +25,8 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private float cameraMovementSpeed = 5f;
 
-    //[SerializeField] float scoreIncrease = 10;
-
     public event EventHandler OnStartPlaying;
     public event EventHandler OnVictory;
-
-    //public event EventHandler<OnCurrentRoomChangedEventArgs> OnCurrentRoomChanged;
-
-    //public class OnCurrentRoomChangedEventArgs : EventArgs
-    //{
-    //    public Transform roomTransform;
-    //}
 
     private enum State
     {
@@ -55,7 +46,7 @@ public class GameManager : MonoBehaviour
     private IRoom[,] roomArray;
     private IRoom bossRoom;
 
-    //private BossRoom bossRoom;
+    private IRoom currentRoom;
 
     private void Awake()
     {
@@ -149,6 +140,7 @@ public class GameManager : MonoBehaviour
                     state = State.Playing;
                     OnStartPlaying?.Invoke(this, EventArgs.Empty);
                     roomArray[0, 0].PlayerEntered(transform.position);
+                    currentRoom = roomArray[0, 0];
                 }
                 countdownTimer += Time.deltaTime;
                 break;
@@ -163,7 +155,6 @@ public class GameManager : MonoBehaviour
                 Time.timeScale = 0;
                 break;
         }
-        //Debug.Log(state);
     }
 
     private void SpawnRooms()
@@ -234,8 +225,9 @@ public class GameManager : MonoBehaviour
         return roomInDirection;
     }
 
-    public void SetCurrentRoomTransform(Transform roomTransform, Vector3 direction)
+    public void SetCurrentRoom(Transform roomTransform, Vector3 direction, IRoom room)
     {
+        currentRoom = room;
         Camera.main.transform.position =
             new Vector3(
                 roomTransform.position.x,
@@ -243,6 +235,11 @@ public class GameManager : MonoBehaviour
                 roomTransform.position.z
             ) - direction;
         StartCoroutine(MoveCameraToPosition(Camera.main.transform.position + direction));
+    }
+
+    public IRoom GetCurrentRoom()
+    {
+        return currentRoom;
     }
 
     private IEnumerator MoveCameraToPosition(Vector3 targetPosition)

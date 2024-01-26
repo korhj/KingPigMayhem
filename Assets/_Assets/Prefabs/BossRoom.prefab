@@ -256,12 +256,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cb1d3e7ff3aa624284f8b04596d2a1a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  kingPig: {fileID: -8679921383154817045, guid: 064f9253b2848504c84d8d38b948da44, type: 3}
+  enemyTypes:
+  - {fileID: 9199856104533815785, guid: 6a3ca3a939fe0884c9c1a58098b5e298, type: 3}
+  enemyPositions:
+  - {x: 0, y: 0, z: -5}
   doorXoffset: 16
   doorYffset: 1.5
   doorZffset: 7
   bossRoomDoorReference: {fileID: 4968025877074973997, guid: 682229b44b3a9b24191fa02cdbede642, type: 3}
-  bossSpawnerReference: {fileID: 4821685089276306197, guid: ce792dbdbc0eab3409c0721a54d81158, type: 3}
+  enemySpawnerReference: {fileID: 6983648717881187022, guid: 3fbb55a57922f914ea0ad929433c016f, type: 3}
 --- !u!1 &915459238456312632
 GameObject:
   m_ObjectHideFlags: 0

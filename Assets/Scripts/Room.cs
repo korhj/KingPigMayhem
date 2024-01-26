@@ -10,6 +10,12 @@ public class Room : MonoBehaviour, IRoom
     EnemySpawner enemySpawnerReference;
 
     [SerializeField]
+    private List<GameObject> enemyTypes;
+
+    [SerializeField]
+    private List<Vector3> enemyPositions;
+
+    [SerializeField]
     private float doorXoffset;
 
     [SerializeField]
@@ -32,6 +38,8 @@ public class Room : MonoBehaviour, IRoom
     private EnemySpawner enemySpawner;
     private (Vector3, Quaternion)[] doorOffsets;
 
+    private List<(GameObject, Vector3)> enemiesToSpawn;
+
     private void Awake()
     {
         enemySpawner = Instantiate(enemySpawnerReference, transform.position, Quaternion.identity);
@@ -44,6 +52,8 @@ public class Room : MonoBehaviour, IRoom
             (new Vector3(-doorXoffset, doorYffset, 0), Quaternion.Euler(0, 90, 0)), // Left: Position and Rotation
             (new Vector3(doorXoffset, doorYffset, 0), Quaternion.Euler(0, -90, 0)) // Right: Position and Rotation
         };
+
+        InitializeEnemiesToSpawn();
     }
 
     private void Start()
@@ -92,6 +102,26 @@ public class Room : MonoBehaviour, IRoom
         }
     }
 
+    private void InitializeEnemiesToSpawn()
+    {
+        foreach (GameObject enemy in enemyTypes)
+        {
+            if (enemy.GetComponent<IEnemy>() == null)
+            {
+                Debug.LogError("Invalid EnemyType");
+            }
+        }
+
+        enemiesToSpawn = new List<(GameObject, Vector3)>();
+
+        foreach (Vector3 position in enemyPositions)
+        {
+            System.Random rand = new System.Random();
+            int index = rand.Next(enemyTypes.Count);
+            enemiesToSpawn.Add((enemyTypes[index], position));
+        }
+    }
+
     private Vector3 GetPlayerSpawnPoint(Vector3 roomPos, Vector3 offset)
     {
         Vector3 playerSpawnPoint = (roomPos - (offset * 0.8f));
@@ -103,12 +133,17 @@ public class Room : MonoBehaviour, IRoom
     {
         doorPos.y = 0;
         Vector3 direction = (transform.position - doorPos).normalized;
-        GameManager.Instance.SetCurrentRoomTransform(transform, direction);
+        GameManager.Instance.SetCurrentRoom(transform, direction, this);
         if (roomEntered)
             return;
 
         roomEntered = true;
-        enemySpawner.SpawnEnemies();
+        enemySpawner.SpawnEnemies(enemiesToSpawn);
+    }
+
+    public void SpawnEnemiesToRoom(List<(GameObject, Vector3)> enemies)
+    {
+        enemySpawner.SpawnEnemies(enemies);
     }
 
     public Vector3 GetRoomPosition()

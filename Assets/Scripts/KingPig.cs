@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem.Controls;
 
@@ -10,10 +12,16 @@ public class KingPig : MonoBehaviour, IEnemy, IHasEnemyHealthBar
     public event EventHandler<IHasEnemyHealthBar.OnHealthUpdateEventArgs> OnHealthUpdate;
 
     [SerializeField]
-    EnemyHealthBarUI enemyHealthBarUI;
+    private AudioClip secondPhaseSoundEffect;
 
     [SerializeField]
-    private float moveSpeed = 3f;
+    private EnemyHealthBarUI enemyHealthBarUI;
+
+    [SerializeField]
+    private GameObject pigGameObject;
+
+    [SerializeField]
+    private float baseMoveSpeed = 3f;
 
     [SerializeField]
     private float chargeSpeed = 3f;
@@ -31,22 +39,16 @@ public class KingPig : MonoBehaviour, IEnemy, IHasEnemyHealthBar
     private float idleTime;
 
     [SerializeField]
+    private float moveSpeedIncreaseDistance;
+
+    [SerializeField]
+    private float speedIncrease;
+
+    [SerializeField]
     private float chargeMaxCooldown;
 
     [SerializeField]
     private float chargeMaxPreparation;
-
-    [SerializeField]
-    private float chargeMaxDuration;
-
-    private float kingPigHealth;
-    private Rigidbody kingPigRigidbody;
-
-    private float chargeCooldown;
-    private float chargePreparation;
-    private float chargeDuration;
-
-    private Vector3 chargeDir;
 
     private enum KingPigStatus
     {
@@ -55,76 +57,146 @@ public class KingPig : MonoBehaviour, IEnemy, IHasEnemyHealthBar
         moving
     }
 
+    private float increasedSpeed;
+    private float moveSpeed;
+    private float kingPigHealth;
+    private Rigidbody kingPigRigidbody;
+
+    private float chargeCooldown;
+    private float chargePreparation;
+    private bool chargeCollided = false;
+
+    private Vector3 chargeDir;
+
     private KingPigStatus kingPigStatus;
 
-    //private Transform healthbarTransform;
+    private bool pigsSummoned = false;
 
     private void Start()
     {
         kingPigStatus = KingPigStatus.preparing;
         chargeCooldown = chargeMaxCooldown;
         chargePreparation = idleTime;
-        chargeDuration = chargeMaxDuration;
         chargeDir = new Vector3(0, 0, 0);
         kingPigHealth = kingPigMaxHealth;
+        moveSpeed = baseMoveSpeed;
+        increasedSpeed = baseMoveSpeed * speedIncrease;
+
         kingPigRigidbody = GetComponent<Rigidbody>();
-        /*
-        Player.Instance.OnPlayerDeath += (object sender, EventArgs e) =>
-        {
-            playerIsAlive = false;
-        };
-        */
     }
 
     private void FixedUpdate()
     {
+        UpdateSpeed();
+        UpdateStatus();
+        if (kingPigStatus == KingPigStatus.moving)
+            Move();
+
+        if (kingPigStatus == KingPigStatus.preparing)
+            Prepare();
+
+        if (kingPigStatus == KingPigStatus.charging)
+            Charge();
+
+        //adjust healthBar position and rotation
+        enemyHealthBarUI.transform.SetPositionAndRotation(
+            kingPigRigidbody.transform.position + new Vector3(0, 2.5f, 1.5f),
+            Quaternion.Euler(90, 0, 0)
+        );
+    }
+
+    private void UpdateSpeed()
+    {
+        float distance = Vector3.Distance(transform.position, Player.Instance.transform.position);
+        if (distance > moveSpeedIncreaseDistance)
+        {
+            moveSpeed = increasedSpeed;
+            return;
+        }
+        moveSpeed = baseMoveSpeed;
+    }
+
+    private void UpdateStatus()
+    {
+        if (kingPigHealth < kingPigMaxHealth / 2 & !pigsSummoned)
+        {
+            AudioManager.Instance.PlaySoundEffect(secondPhaseSoundEffect);
+            SummonPigs();
+        }
         if (chargeCooldown <= 0)
         {
             chargeCooldown = chargeMaxCooldown;
             kingPigStatus = KingPigStatus.preparing;
+            return;
         }
         if (chargePreparation <= 0)
         {
             chargePreparation = chargeMaxPreparation;
             kingPigStatus = KingPigStatus.charging;
+            return;
         }
-        if (chargeDuration <= 0)
+        if (chargeCollided)
         {
-            chargeDuration = chargeMaxDuration;
+            chargeCollided = false;
             kingPigStatus = KingPigStatus.moving;
+            return;
         }
+    }
 
-        if (kingPigStatus == KingPigStatus.moving)
-        {
-            Vector3 moveDir = (Player.Instance.GetPlayerPosition() - transform.position).normalized;
-            float moveDistance = moveSpeed * Time.fixedDeltaTime;
-            kingPigRigidbody.MovePosition(transform.position + moveDir * moveDistance);
-            kingPigRigidbody.transform.rotation = Quaternion.LookRotation(-moveDir, transform.up);
-            enemyHealthBarUI.transform.SetPositionAndRotation(
-                kingPigRigidbody.transform.position + new Vector3(0, 2.5f, 1),
-                Quaternion.Euler(90, 0, 0)
-            );
-            chargeCooldown -= Time.fixedDeltaTime;
-        }
+    private void SummonPigs()
+    {
+        pigsSummoned = true;
+        IRoom currentRoom = GameManager.Instance.GetCurrentRoom();
+        Vector3 rightSide =
+            transform.position - currentRoom.GetRoomPosition() + transform.right * 2f;
+        Vector3 leftSide =
+            transform.position - currentRoom.GetRoomPosition() - transform.right * 2f;
 
-        if (kingPigStatus == KingPigStatus.preparing)
-        {
-            chargeDir = -(Player.Instance.GetPlayerPosition() - transform.position).normalized;
-            chargePreparation -= Time.fixedDeltaTime;
-            kingPigRigidbody.transform.rotation = Quaternion.LookRotation(chargeDir, transform.up);
-        }
-        if (kingPigStatus == KingPigStatus.charging)
-        {
-            chargeDuration -= Time.fixedDeltaTime;
-            float moveDistance = chargeSpeed * Time.fixedDeltaTime;
-            kingPigRigidbody.transform.rotation = Quaternion.LookRotation(chargeDir, transform.up);
-            kingPigRigidbody.MovePosition(transform.position - chargeDir * moveDistance);
-        }
+        List<(GameObject, Vector3)> summonedPigs = new();
+        Debug.Log(rightSide + " " + leftSide);
+        if (pigGameObject.GetComponent<IEnemy>() == null)
+            Debug.LogError("Invalid Pig gameObject");
+        summonedPigs.Add((pigGameObject, rightSide));
+        summonedPigs.Add((pigGameObject, leftSide));
+        currentRoom.SpawnEnemiesToRoom(summonedPigs);
+    }
 
+    private void Move()
+    {
+        Vector3 moveDir = (Player.Instance.GetPlayerPosition() - transform.position).normalized;
+        float moveDistance = moveSpeed * Time.fixedDeltaTime;
+        kingPigRigidbody.MovePosition(transform.position + moveDir * moveDistance);
+        kingPigRigidbody.transform.rotation = Quaternion.LookRotation(-moveDir, transform.up);
         enemyHealthBarUI.transform.SetPositionAndRotation(
-            kingPigRigidbody.transform.position + new Vector3(0, 2.5f, 1.5f),
+            kingPigRigidbody.transform.position + new Vector3(0, 2.5f, 1),
             Quaternion.Euler(90, 0, 0)
         );
+        chargeCooldown -= Time.fixedDeltaTime;
+    }
+
+    private void Prepare()
+    {
+        chargeDir = -(Player.Instance.GetPlayerPosition() - transform.position).normalized;
+        chargePreparation -= Time.fixedDeltaTime;
+        kingPigRigidbody.transform.rotation = Quaternion.LookRotation(chargeDir, transform.up);
+    }
+
+    private void Charge()
+    {
+        float moveDistance = chargeSpeed * Time.fixedDeltaTime;
+        kingPigRigidbody.transform.rotation = Quaternion.LookRotation(chargeDir, transform.up);
+        kingPigRigidbody.MovePosition(transform.position - chargeDir * moveDistance);
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (
+            collision.gameObject != Player.Instance.gameObject
+            && collision.gameObject.GetComponent<Pig>() == null
+        )
+        {
+            chargeCollided = true;
+        }
     }
 
     public void IncreasePlayerScoreOnDeath(int scoreIncrease)

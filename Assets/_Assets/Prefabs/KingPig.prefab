@@ -98,16 +98,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 337db9c4709790e4e9c901acd00364b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  secondPhaseSoundEffect: {fileID: 8300000, guid: d2fa7484dc1ae64449e6123a5ce79578, type: 3}
   enemyHealthBarUI: {fileID: 3061448771549556528}
-  moveSpeed: 3
-  chargeSpeed: 9
+  pigGameObject: {fileID: 9199856104533815785, guid: a68eafa1a9333e543a77aacc24883668, type: 3}
+  baseMoveSpeed: 3
+  chargeSpeed: 10
   kingPigMaxHealth: 60
   kingPigDamage: 3
   scoreIncrease: 100
-  maxIdleTime: 1.5
+  idleTime: 1.5
+  moveSpeedIncreaseDistance: 7
+  speedIncrease: 3
   chargeMaxCooldown: 3
   chargeMaxPreparation: 0.5
-  chargeMaxDuration: 1
 --- !u!1001 &4288208654247590225
 PrefabInstance:
   m_ObjectHideFlags: 0
