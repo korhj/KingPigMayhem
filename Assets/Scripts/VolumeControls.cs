@@ -20,7 +20,7 @@ public class VolumeControls : MonoBehaviour
 
     void Start()
     {
-        volumeSlider.value = MusicController.Instance.GetVolume();
+        volumeSlider.value = AudioManager.Instance.GetVolume();
 
         muteButton.onClick.AddListener(() =>
         {
@@ -30,11 +30,14 @@ public class VolumeControls : MonoBehaviour
         volumeSlider.onValueChanged.AddListener(
             (sliderValue) =>
             {
-                MusicController.Instance.SetVolume(sliderValue);
+                AudioManager.Instance.SetVolume(sliderValue);
             }
         );
 
-        MusicController.Instance.OnVolumeChanged += (object sender, EventArgs e) =>
+        AudioManager.Instance.OnVolumeChanged += (
+            object sender,
+            AudioManager.OnVolumeChangedEventArgs e
+        ) =>
         {
             muteButton.image.sprite = volumeOnIcon;
         };
@@ -42,7 +45,7 @@ public class VolumeControls : MonoBehaviour
 
     private void MuteVolume()
     {
-        bool muted = MusicController.Instance.Mute();
+        bool muted = AudioManager.Instance.Mute();
 
         if (muted)
         {

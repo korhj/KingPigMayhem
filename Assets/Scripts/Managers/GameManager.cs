@@ -78,7 +78,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        MusicController.Instance.PlayMusic();
+        MusicManager.Instance.PlayMusic();
         countdownTimer = 0f;
         scoreTimer = 0f;
         gamePaused = false;

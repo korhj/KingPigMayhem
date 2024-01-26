@@ -12,7 +12,7 @@ public class MainMenuUI : MonoBehaviour
 
     private void Start()
     {
-        MusicController.Instance.PlayMusic();
+        MusicManager.Instance.PlayMusic();
 
         playButton.onClick.AddListener(() =>
         {

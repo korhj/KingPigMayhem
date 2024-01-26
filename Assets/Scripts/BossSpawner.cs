@@ -38,7 +38,7 @@ public class BossSpawner : MonoBehaviour, ISpawner
         {
             enemiesActive = false;
             OnEnemiesDead?.Invoke(this, EventArgs.Empty);
-            MusicController.Instance.PlayMusic();
+            MusicManager.Instance.PlayMusic();
             GameManager.Instance.BossKilled();
         }
     }
@@ -53,6 +53,6 @@ public class BossSpawner : MonoBehaviour, ISpawner
                 Quaternion.identity
             )
         );
-        MusicController.Instance.PlayBossMusic();
+        MusicManager.Instance.PlayBossMusic();
     }
 }

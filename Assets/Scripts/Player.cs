@@ -41,6 +41,12 @@ public class Player : MonoBehaviour
     }
 
     [SerializeField]
+    private AudioClip attackSoundEffect;
+
+    [SerializeField]
+    private AudioClip takeDamageSoundEffect;
+
+    [SerializeField]
     private float moveSpeed = 5f;
 
     [SerializeField]
@@ -169,6 +175,7 @@ public class Player : MonoBehaviour
     {
         if (timeSinceDamage > invulnerabilityTime)
         {
+            AudioManager.Instance.PlaySoundEffect(takeDamageSoundEffect);
             playerHealth -= enemy.GetEnemyDamage();
             OnHealthUpdate?.Invoke(
                 this,
@@ -190,6 +197,7 @@ public class Player : MonoBehaviour
     {
         if (timeSinceAttack > attackSpeed)
         {
+            AudioManager.Instance.PlaySoundEffect(attackSoundEffect);
             timeSinceAttack = 0;
             OnShoot?.Invoke(
                 this,
@@ -205,6 +213,7 @@ public class Player : MonoBehaviour
 
     private void ChargeAttack(Vector3 chargeDir)
     {
+        AudioManager.Instance.PlaySoundEffect(attackSoundEffect);
         OnShootChargeAttack?.Invoke(
             this,
             new OnShootEventArgs
